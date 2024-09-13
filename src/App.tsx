@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import type { Client } from "@remixproject/plugin";
+import type { Api } from "@remixproject/plugin-utils";
+import type { IRemixApi } from "@remixproject/plugin-api";
+import { createClient } from "@remixproject/plugin-iframe";
 
-function App() {
+import { log } from "./utils/logger";
+import { Main } from "./components/Main";
+
+export const App: React.FunctionComponent = () => {
+  const [client, setClient] = useState<Client<Api, Readonly<IRemixApi>> | undefined | null>(null);
+  const [connection, setConnection] = useState<boolean>(false);
+
+  useEffect(() => {
+    const init = async () => {
+      const temp = createClient();
+      await temp.onload();
+
+      setClient(temp);
+      setConnection(true);
+    };
+    if (!connection) init();
+    log.debug(`%cẅël̈l̈c̈öm̈ë-̈ẗö-̈ẅël̈l̈d̈ön̈ë-̈c̈öd̈ë!̈`, "color:yellow");
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Container>{client && <Main client={client} />}</Container>
     </div>
   );
-}
+};
 
 export default App;
