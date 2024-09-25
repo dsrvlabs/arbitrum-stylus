@@ -9,11 +9,30 @@ import { Header } from "./Header";
 import { ConnectMetmask } from "./ConnectMetmask";
 import { ProjectInfo } from "./ProjectInfo";
 import { NetworkWarn } from "./NetworkWarn";
+import { StatusAlert } from "./StatusAlert";
+
+export const initButtonStatus = {
+  active: false,
+  disabled: false,
+  loading: false,
+  error: false,
+  ready: false,
+};
+
+type ButtonStatusType = {
+  active?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  error?: boolean;
+  ready?: boolean;
+};
 
 export type StatusType = {
-  button: boolean;
-  error: string;
-} | null;
+  metamask: ButtonStatusType;
+  compile: ButtonStatusType;
+  deploy: ButtonStatusType;
+  activate: ButtonStatusType;
+};
 
 export type InfoType = {
   network: string;
@@ -26,33 +45,36 @@ interface InterfaceProps {
 }
 
 export const Main: FunctionComponent<InterfaceProps> = ({ client }) => {
-  const [status, setStatus] = useState<StatusType>(null);
+  const [status, setStatus] = useState<StatusType>({
+    metamask: { ...initButtonStatus },
+    compile: initButtonStatus,
+    deploy: initButtonStatus,
+    activate: initButtonStatus,
+  });
+  const [alert, setAlert] = useState<string | null>(null);
   const [info, setInfo] = useState<InfoType>(null);
-
-  console.log(info);
 
   return (
     <div className="flex flex-col gap-3 h-[100vh]">
       <Header client={client} />
+      <StatusAlert alert={alert} setAlert={setAlert} />
       <div className="flex-1">
-        <ConnectMetmask client={client} status={status} setStatus={setStatus} setInfo={setInfo} />
+        <ConnectMetmask status={status} setStatus={setStatus} info={info} setInfo={setInfo} setAlert={setAlert} />
         {info ? (
-          <ProjectInfo client={client} info={info} setInfo={setInfo} status={status} setStatus={setStatus} />
+          <ProjectInfo
+            client={client}
+            info={info}
+            setInfo={setInfo}
+            status={status}
+            setStatus={setStatus}
+            setAlert={setAlert}
+          />
         ) : (
           <NetworkWarn />
         )}
       </div>
       <DocumentationButton />
       <MakeAIssueButton />
-      {/* {chain ? (
-        <ChainConnectContainer client={client} chain={chain} setChain={setChain} />
-      ) : (
-        <div>
-          <ChainSelectButtonContainer setChain={setChain} client={client} />
-          
-          <MakeAIssueButton />
-        </div>
-      )} */}
     </div>
   );
 };

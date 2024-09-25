@@ -1,7 +1,7 @@
 import { ARBITRUM_ONE, ARBITRUM_SEPOLIA } from "../const/network";
 
 export const NetworkWarn = () => (
-  <small style={{ color: "red", fontWeight: "bold" }}>
+  <small className="text-red-500 font-bold">
     {ARBITRUM_ONE.chainName} and {ARBITRUM_SEPOLIA.chainName} network is supported currently.
     <br />
     Please switch to the network below and reconnect your wallet.
