@@ -757,9 +757,9 @@ export const ProjectInfo = ({ client, info, setInfo, status, setStatus, setAlert
         ...prev,
         deploy: { ...initButtonStatus, loading: true },
       }));
-      let hash = "";
+      let hash;
       try {
-        hash = await ethereum.request({
+        hash = await ethereum.request<string>({
           method: "eth_sendTransaction",
           params: [
             {
@@ -954,9 +954,9 @@ export const ProjectInfo = ({ client, info, setInfo, status, setStatus, setAlert
       return;
     }
 
-    let activation_hash = "";
+    let activation_hash;
     try {
-      activation_hash = await ethereum.request({
+      activation_hash = await ethereum.request<string>({
         method: "eth_sendTransaction",
         params: [
           {
@@ -975,6 +975,8 @@ export const ProjectInfo = ({ client, info, setInfo, status, setStatus, setAlert
       // }));
       return;
     }
+    if (!activation_hash) return;
+
     const activation_tx = await web3.eth.getTransaction(activation_hash);
     client.terminal.log({
       type: "info",
@@ -1532,7 +1534,7 @@ const DrawMethod: React.FunctionComponent<InterfaceDrawMethodProps> = (props) =>
             } else {
               try {
                 const hash = abi.name
-                  ? await ethereum.request({
+                  ? await ethereum.request<string>({
                       method: "eth_sendTransaction",
                       params: [
                         {
@@ -1543,6 +1545,9 @@ const DrawMethod: React.FunctionComponent<InterfaceDrawMethodProps> = (props) =>
                       ],
                     })
                   : null;
+                if (!hash) {
+                  throw new Error("Failed to get hash");
+                }
                 console.log(`@@@ call hash=${hash}`);
 
                 const receipt = await getReceiptRecursively(hash);

@@ -1,9 +1,11 @@
-export {};
+import type { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum: MetaMaskInpageProvider;
     gtag: any;
     dataLayer: any;
   }
 }
+
+export {};
