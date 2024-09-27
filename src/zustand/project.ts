@@ -1,9 +1,11 @@
 import type { StateCreator } from "zustand";
 import { produce } from "immer";
 import { ProjectState } from "./project.types";
-import { ARBITRUM_NETWORK } from "../const/network";
+import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../const/network";
+import { GlobalState } from "./global.types";
 
 const initial = {
+  errorMsg: null,
   name: {
     loading: false,
     error: false,
@@ -22,7 +24,7 @@ const initial = {
   network: {
     loading: false,
     error: false,
-    data: null,
+    data: ARBITRUM_ONE,
   },
   networks: {
     loading: false,
@@ -41,9 +43,15 @@ const initial = {
   },
 };
 
-export const createProjectStore: StateCreator<ProjectState> = (set) => ({
+export const createProjectStore: StateCreator<ProjectState & GlobalState, [], [], ProjectState> = (set, get) => ({
   project: {
     ...initial,
+    setErrorMsg: (msg: string) =>
+      set(
+        produce((state: ProjectState) => {
+          state.project.errorMsg = msg;
+        })
+      ),
     setName: (name: string) =>
       set(
         produce((state: ProjectState) => {
@@ -56,18 +64,70 @@ export const createProjectStore: StateCreator<ProjectState> = (set) => ({
           state.project.template.data = template;
         })
       ),
-    setProjects: (projects: string[]) =>
-      set(
-        produce((state: ProjectState) => {
-          state.project.projects.data = projects;
-        })
-      ),
     setProject: (project: string) =>
       set(
         produce((state: ProjectState) => {
           state.project.project.data = project;
         })
       ),
+    fetchProjects: async () => {
+      const client = get().global.client;
+      if (!client) {
+        set(
+          produce((state: ProjectState) => {
+            state.project.projects.error = true;
+            return;
+          })
+        );
+        return;
+      }
+      set(
+        produce((state: ProjectState) => {
+          state.project.projects.loading = true;
+        })
+      );
+
+      const findTomlFileRecursively = async (currentPath: string): Promise<void> => {
+        const list = await client.fileManager.readdir(currentPath);
+        const hasTomlFile = Object.keys(list).some((item) => item.endsWith("Cargo.toml"));
+        if (hasTomlFile) {
+          set(
+            produce((state: ProjectState) => {
+              state.project.projects.data = [
+                ...new Set([...(state.project.projects.data ?? []), currentPath.replace("browser/", "")]),
+              ];
+              // state.project.projects.data = [
+              //   ...(state.project.projects.data ?? []),
+              //   currentPath.replace("browser/", ""),
+              // ];
+            })
+          );
+        }
+
+        for (const [key, value] of Object.entries(list)) {
+          if ((value as any).isDirectory) {
+            const additionalPath = key.split("/").pop();
+            await findTomlFileRecursively(currentPath + "/" + additionalPath);
+          }
+        }
+      };
+
+      try {
+        await findTomlFileRecursively("browser/arbitrum");
+        set(
+          produce((state: ProjectState) => {
+            state.project.projects.loading = false;
+          })
+        );
+      } catch (error) {
+        set(
+          produce((state: ProjectState) => {
+            state.project.projects.loading = false;
+            state.project.projects.error = true;
+          })
+        );
+      }
+    },
     setNetwork: (network) =>
       set(
         produce((state: ProjectState) => {

@@ -5,6 +5,7 @@ import { produce } from "immer";
 import type { AccountState, RpcError } from "./account.types";
 
 const initial = {
+  errorMsg: null,
   address: {
     loading: false,
     error: false,
@@ -30,6 +31,12 @@ const initial = {
 export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
   account: {
     ...initial,
+    setErrorMsg: (msg: string) =>
+      set(
+        produce((state: AccountState) => {
+          state.account.errorMsg = msg;
+        })
+      ),
     fetchAddress: async () => {
       set(
         produce((state: AccountState) => {
@@ -40,6 +47,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
       if (!provider) {
         set(
           produce((state: AccountState) => {
+            state.account.address.loading = false;
             state.account.address.error = true;
           })
         );
@@ -48,29 +56,27 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
       try {
         const account = await provider.request<string[]>({ method: "eth_requestAccounts" });
         if (!account || account.length === 0) {
-          // set((state) => ({ account: { ...state.account, address: { ...state.account.address, error: true, errorMsg: 'No account found.' } } }));
           set(
             produce((state: AccountState) => {
+              state.account.address.loading = false;
               state.account.address.error = true;
               state.account.address.errorMsg = "No account found.";
             })
           );
           return;
         }
-        set((state) => ({
-          account: { ...state.account, address: { ...state.account.address, data: account[0] ?? "" } },
-        }));
-      } catch (error) {
-        set(
-          produce((state: AccountState) => {
-            state.account.address.error = true;
-            if (isRPCError(error)) state.account.address.errorMsg = error.message;
-          })
-        );
-      } finally {
         set(
           produce((state: AccountState) => {
             state.account.address.loading = false;
+            state.account.address.data = account[0] ?? "";
+          })
+        );
+      } catch (error) {
+        set(
+          produce((state: AccountState) => {
+            state.account.address.loading = false;
+            state.account.address.error = true;
+            if (isRPCError(error)) state.account.address.errorMsg = error.message;
           })
         );
       }
@@ -78,6 +84,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
     fetchBalance: async () => {
       set(
         produce((state: AccountState) => {
+          state.account.balance.loading = false;
           state.account.balance.loading = true;
         })
       );
@@ -85,6 +92,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
       if (!provider) {
         set(
           produce((state: AccountState) => {
+            state.account.balance.loading = false;
             state.account.provider.error = true;
           })
         );
@@ -98,6 +106,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
         if (!balance) {
           set(
             produce((state: AccountState) => {
+              state.account.balance.loading = false;
               state.account.balance.error = true;
               state.account.balance.errorMsg = "Failed to get balance.";
             })
@@ -107,20 +116,16 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
         const formattedBalance = parseFloat(web3.utils.fromWei(balance, "ether")).toFixed(4);
         set(
           produce((state: AccountState) => {
+            state.account.balance.loading = false;
             state.account.balance.data = parseFloat(formattedBalance);
           })
         );
       } catch (error) {
         set(
           produce((state: AccountState) => {
+            state.account.balance.loading = false;
             state.account.balance.error = true;
             if (isRPCError(error)) state.account.balance.errorMsg = error.message;
-          })
-        );
-      } finally {
-        set(
-          produce((state: AccountState) => {
-            state.account.balance.loading = false;
           })
         );
       }
@@ -135,6 +140,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
       if (!provider) {
         set(
           produce((state: AccountState) => {
+            state.account.network.loading = false;
             state.account.provider.error = true;
           })
         );
@@ -145,6 +151,7 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
         if (!network) {
           set(
             produce((state: AccountState) => {
+              state.account.network.loading = false;
               state.account.network.error = true;
               state.account.network.errorMsg = "Failed to get network.";
             })
@@ -153,20 +160,16 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
         }
         set(
           produce((state: AccountState) => {
+            state.account.network.loading = false;
             state.account.network.data = network;
           })
         );
       } catch (error) {
         set(
           produce((state: AccountState) => {
+            state.account.network.loading = false;
             state.account.network.error = true;
             if (isRPCError(error)) state.account.network.errorMsg = error.message;
-          })
-        );
-      } finally {
-        set(
-          produce((state: AccountState) => {
-            state.account.network.loading = false;
           })
         );
       }

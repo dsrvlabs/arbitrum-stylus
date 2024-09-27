@@ -3,10 +3,12 @@ import { DataType } from "./global.types";
 
 export interface AccountState {
   account: {
+    errorMsg: string | null;
     address: DataType<string>;
     network: DataType<string>;
     balance: DataType<number>;
     provider: DataType<MetaMaskInpageProvider>;
+    setErrorMsg: (msg: string) => void;
     fetchAddress: () => Promise<void>;
     fetchBalance: () => Promise<void>;
     fetchNetwork: () => Promise<void>;

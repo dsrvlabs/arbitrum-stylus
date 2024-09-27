@@ -1,18 +1,21 @@
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../const/network";
-import { DataType } from "./global.types";
+import type { DataType, NonNullableDataType } from "./global.types";
 
 export interface ProjectState {
   project: {
+    errorMsg: string | null;
     name: DataType<string>;
     templates: DataType<string[]>;
     template: DataType<string>;
-    projects: DataType<string[]>;
     project: DataType<string>;
-    networks: DataType<typeof ARBITRUM_NETWORK>;
-    network: DataType<typeof ARBITRUM_ONE>;
+    projects: DataType<string[]>;
+    networks: NonNullableDataType<typeof ARBITRUM_NETWORK>;
+    network: NonNullableDataType<typeof ARBITRUM_ONE>;
+    setErrorMsg: (msg: string) => void;
     setName: (name: string) => void;
     setTemplate: (template: string) => void;
-    setProjects: (projects: string[]) => void;
+    // setProjects: (projects: string[]) => void;
+    fetchProjects: () => Promise<void>;
     setProject: (project: string) => void;
     setNetwork: (network: typeof ARBITRUM_ONE) => void;
   };
