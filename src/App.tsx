@@ -7,9 +7,12 @@ import { createClient } from "@remixproject/plugin-iframe";
 
 import { log } from "./utils/logger";
 import { Main } from "./components/Main";
+import { useStore } from "./zustand";
+import { useShallow } from "zustand/react/shallow";
 
 export const App: React.FunctionComponent = () => {
-  const [client, setClient] = useState<Client<Api, Readonly<IRemixApi>> | undefined | null>(null);
+  // const [client, setClient] = useState<Client<Api, Readonly<IRemixApi>> | undefined | null>(null);
+  const { global } = useStore(useShallow((state) => ({ global: state.global })));
   const [connection, setConnection] = useState<boolean>(false);
 
   useEffect(() => {
@@ -17,7 +20,7 @@ export const App: React.FunctionComponent = () => {
       const temp = createClient();
       await temp.onload();
 
-      setClient(temp);
+      global.setClient(temp);
       setConnection(true);
     };
     if (!connection) init();
@@ -26,7 +29,7 @@ export const App: React.FunctionComponent = () => {
 
   return (
     <div className="App">
-      <Container>{client && <Main client={client} />}</Container>
+      <Container>{global.client && <Main />}</Container>
     </div>
   );
 };
