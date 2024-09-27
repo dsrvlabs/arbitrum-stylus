@@ -4,12 +4,14 @@ import type { Api } from "@remixproject/plugin-utils";
 import type { IRemixApi } from "@remixproject/plugin-api";
 import { EditorClient } from "../utils/editor";
 import RefreshButton from "./RefreshButton";
+import { useStore } from "../zustand";
+import { useShallow } from "zustand/react/shallow";
 
-interface HeaderProps {
-  client: Client<Api, Readonly<IRemixApi>>;
-}
-export const Header = ({ client }: HeaderProps) => {
+interface HeaderProps {}
+export const Header = ({}: HeaderProps) => {
+  const { client } = useStore(useShallow((state) => ({ client: state.global.client })));
   const handleRefresh = async () => {
+    if (!client) return;
     const editorClient = new EditorClient(client);
     await editorClient.discardHighlight();
     await editorClient.clearAnnotations();

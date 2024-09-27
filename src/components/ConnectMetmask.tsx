@@ -1,5 +1,6 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { Button } from "react-bootstrap";
+import { useShallow } from "zustand/react/shallow";
 import web3 from "web3";
 import type { Client } from "@remixproject/plugin";
 import type { Api } from "@remixproject/plugin-utils";
@@ -8,6 +9,8 @@ import type { IRemixApi } from "@remixproject/plugin-api";
 import metamask from "../assets/metamask.png";
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../const/network";
 import { InfoType, initButtonStatus, StatusType } from "./Main";
+import { useStore } from "../zustand";
+import { LoaderWrapper } from "./common/loader";
 
 interface RpcError extends Error {
   code: number;
@@ -17,99 +20,58 @@ const isRPCError = (error: any): error is RpcError => {
   return typeof error === "object" && error !== null && "code" in error && "message" in error;
 };
 
-interface ConnectMetmaskProps {
-  status: StatusType;
-  setStatus: Dispatch<SetStateAction<StatusType>>;
-  info: InfoType;
-  setInfo: Dispatch<SetStateAction<InfoType>>;
-  setAlert: Dispatch<SetStateAction<string | null>>;
-}
-export const ConnectMetmask = ({ status, setStatus, info, setInfo, setAlert }: ConnectMetmaskProps) => {
-  const { ethereum } = window;
+interface ConnectMetmaskProps {}
+export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
+  console.log("connect metamask rerender");
+  const { account, project } = useStore(useShallow((state) => ({ account: state.account, project: state.project })));
+  const isLoading =
+    account.provider.loading || account.network.loading || account.address.loading || account.balance.loading;
+  const isActive =
+    account.provider.data &&
+    ARBITRUM_NETWORK.some((item) => item.chainId === account.network.data) &&
+    account.address.data &&
+    account.balance.data;
 
-  const getAccount = async () => {
-    try {
-      const accounts: string[] = await ethereum.request({ method: "eth_requestAccounts" });
-      if (accounts.length === 0) {
-        setAlert("No account found.");
-        setStatus((prev) => ({ ...prev, metamask: initButtonStatus }));
-        return null;
-      }
-      return accounts[0];
-    } catch (error) {
-      let message = "Failed to get account. Please try again later.";
-      if (isRPCError(error)) {
-        message = error.message;
-      }
-      setStatus((prev) => ({ ...prev, metamask: initButtonStatus }));
-      setAlert(message);
-      return null;
+  const handleClickMetamask = async () => {
+    if (!account.provider.data) {
+      account.setErrorMsg("Metamask is not installed. Please install Metamask to continue.");
+      return;
+    }
+    await switchNetwork(project.network.data.chainId);
+    await account.fetchAddress();
+    await account.fetchBalance();
+  };
+
+  /**
+   * 1. user가 arbitrum chain에 연결되어 있다면 user의 현재 network 정보를 가져오고, project의 network를 user의 network로 변경
+   * 2. user가 arbitrum chain에 연결되어 있지 않다면 project의 network 정보를 가져오고, 그 network로 연결
+   * 3. project의 network값이 변경된다면 user의 network값도 변경
+   */
+  const accessPluginFirst = async () => {
+    if (!account.provider.data) {
+      return;
+    }
+    await account.fetchNetwork();
+    const arbitrumNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === account.network.data);
+    if (arbitrumNetwork) {
+      project.setNetwork(arbitrumNetwork);
+      await account.fetchAddress();
+      await account.fetchBalance();
+    } else {
+      await switchNetwork(project.network.data.chainId);
+      await account.fetchAddress();
+      await account.fetchBalance();
     }
   };
 
-  const getBalance = async (address: string) => {
-    try {
-      const balance: string = await ethereum.request({
-        method: "eth_getBalance",
-        params: [address, "latest"],
-      });
-      const formattedBalance = web3.utils.fromWei(balance, "ether");
-      return parseFloat(formattedBalance).toFixed(4);
-    } catch (error) {
-      let message = "Failed to get balance. Please try again later.";
-      if (isRPCError(error)) {
-        message = error.message;
-      }
-      setStatus((prev) => ({ ...prev, metamask: initButtonStatus }));
-      setAlert(message);
-      return null;
-    }
-  };
-
-  const getChainId = async () => {
-    try {
-      const chainId: string = await ethereum.request({ method: "eth_chainId" });
-      return chainId;
-    } catch (error) {
-      let message = "Failed to get chain ID. Please try again later.";
-      if (isRPCError(error)) {
-        message = error.message;
-      }
-      setStatus((prev) => ({ ...prev, metamask: initButtonStatus }));
-      setAlert(message);
-      return null;
-    }
-  };
-
-  const connectMetamask = async () => {
-    const currentChainId = await getChainId();
-    if (!currentChainId) return;
-    const isValidNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === currentChainId);
-    let network = info?.network ? info.network : isValidNetwork ? currentChainId : ARBITRUM_ONE.chainId;
-    if (currentChainId !== network) await switchNetwork(network);
-
-    const account = await getAccount();
-    if (!account) return;
-    const balance = await getBalance(account);
-    if (!balance) return;
-
-    setInfo((prev) => {
-      if (prev) return { ...prev, account, balance, network };
-      return { account, balance, network };
-    });
-  };
-
-  const switchNetwork = async (chainId: string = ARBITRUM_ONE.chainId) => {
+  const switchNetwork = async (chainId = ARBITRUM_ONE.chainId) => {
     const targetNetwork = ARBITRUM_NETWORK.find((network) => network.chainId === chainId);
     if (!targetNetwork) {
-      setAlert("Invalid chain ID. Please provide a valid chain ID.");
+      account.setErrorMsg("Trying to switch to an invalid network.");
       return;
     }
     try {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: chainId }],
-      });
+      await account.provider.data?.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
     } catch (error) {
       let message = "Failed to switch network. Please try again.";
       if (isRPCError(error)) {
@@ -119,98 +81,66 @@ export const ConnectMetmask = ({ status, setStatus, info, setInfo, setAlert }: C
       if (typeof error === "object" && error !== null && "code" in error) {
         if (error.code === 4902) {
           try {
-            await ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [targetNetwork],
-            });
+            await account.provider.data?.request({ method: "wallet_addEthereumChain", params: [targetNetwork] });
+            return;
           } catch (error) {
-            let message = "Failed to switch network. Please try again.";
+            message = "Failed to add network. Please try again.";
             if (isRPCError(error)) {
               message = error.message;
             }
-            setAlert(message);
           }
-        } else {
-          setAlert(message);
         }
       }
+      account.setErrorMsg(message);
+    } finally {
+      await account.fetchNetwork();
     }
   };
 
-  const switchAccount = async (account: string) => {
-    const currentChainId = await getChainId();
-    const isValidNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === currentChainId);
-    if (!isValidNetwork) {
-      setInfo(null);
-      return;
+  const traceSwitchAccount = async (accounts: unknown) => {
+    if (Array.isArray(accounts) && accounts.length > 0) {
+      await account.fetchAddress();
+      await account.fetchBalance();
     }
-
-    const balance = await getBalance(account);
-    if (!balance) return;
-
-    setInfo((prev) => {
-      if (prev) return { ...prev, account, balance };
-      return { account, balance, network: ARBITRUM_ONE.chainId };
-    });
   };
-
-  const switchChainId = async (chainId: string) => {
-    const isValidNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === chainId);
-    if (!isValidNetwork) {
-      setInfo(null);
-      return;
+  const traceSwitchNetwork = async (chainId: unknown) => {
+    if (typeof chainId === "string") {
+      const targetNetwork = ARBITRUM_NETWORK.find((network) => network.chainId === chainId);
+      if (!targetNetwork) return;
+      project.setNetwork(targetNetwork);
+      await account.fetchBalance();
     }
-
-    const account = await getAccount();
-    if (!account) return;
-    const balance = await getBalance(account);
-    if (!balance) return;
-
-    setInfo((prev) => {
-      if (prev) return { ...prev, account, balance, network: chainId };
-      return { account, balance, network: chainId };
-    });
   };
 
   useEffect(() => {
-    if (!ethereum) return;
-    ethereum.on("accountsChanged", async (accounts: string[]) => {
-      console.log("accountsChanged", accounts);
-      // FIXME: 추후 compile, deploy등 버튼도 통제해야 함
-      switchAccount(accounts[0]);
-    });
-    ethereum.on("chainChanged", async (chainId: string) => {
-      console.log("chainChanged", chainId);
-      // FIXME: 추후 compile, deploy등 버튼도 통제해야 함
-      switchChainId(chainId);
-    });
+    if (!account.provider.data) {
+      account.setErrorMsg("Metamask is not installed. Please install Metamask to continue.");
+      return;
+    }
+    accessPluginFirst();
+
+    account.provider.data.on("accountsChanged", traceSwitchAccount);
+    account.provider.data.on("chainChanged", traceSwitchNetwork);
 
     return () => {
-      ethereum.removeAllListeners("accountsChanged");
-      ethereum.removeAllListeners("chainChanged");
+      if (!account.provider.data) return;
+      account.provider.data.removeListener("accountsChanged", traceSwitchAccount);
+      account.provider.data.removeListener("chainChanged", traceSwitchNetwork);
     };
   }, []);
 
   return (
     <div className="mb-2 flex flex-col gap-2">
       <Button
-        className={`px-[1.25rem] py-[0.75rem] w-full flex justify-center items-center ${
-          status.metamask.active ? "bg-metamask-active" : "bg-metamask-default"
-        } border-0 rounded-sm`}
-        disabled={status.metamask.disabled}
-        onClick={async () => {
-          if (!ethereum || !ethereum.isMetaMask) {
-            setAlert("MetaMask is not installed. Please install MetaMask to continue.");
-            setStatus((prev) => ({ ...prev, metamask: initButtonStatus }));
-            return;
-          } else {
-            await connectMetamask();
-            setStatus((prev) => ({ ...prev, metamask: { ...initButtonStatus, active: true } }));
-          }
-        }}
+        className={`px-[1.25rem] py-[0.75rem] w-full relative flex justify-center items-center ${
+          isActive ? "bg-metamask-active" : "bg-metamask-default"
+        } border-0 rounded-sm overflow-hidden`}
+        disabled={isLoading}
+        onClick={handleClickMetamask}
       >
         <img className="w-[25px] mr-[10px]" src={metamask} alt="metamask" />
         <b>Connect to MetaMask</b>
+        <LoaderWrapper loading={isLoading} />
       </Button>
     </div>
   );
