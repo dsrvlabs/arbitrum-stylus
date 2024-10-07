@@ -15,7 +15,6 @@ export interface DataType<T> {
   errorMsg?: string;
   active?: boolean;
   disabled?: boolean;
-  ready?: boolean;
   data: T | null;
 }
 
