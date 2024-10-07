@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
-import metamask from "../assets/metamask.png";
+import { LoaderWrapper } from "./common/loader";
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../const/network";
 import { useStore } from "../zustand";
-import { LoaderWrapper } from "./common/loader";
+import metamask from "../assets/metamask.png";
 
 interface RpcError extends Error {
   code: number;

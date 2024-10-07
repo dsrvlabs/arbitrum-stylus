@@ -1,15 +1,15 @@
+import { useEffect } from "react";
 import axios from "axios";
 import JSZip from "jszip";
+import { FaSyncAlt } from "react-icons/fa";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "../../zustand";
-import wrapPromise from "../../utils/wrapPromise";
+import wrapPromise from "../../utils/wrap-promise";
 import { log } from "../../utils/logger";
-import { sendCustomEvent } from "../../utils/sendCustomEvent";
-import { FaSyncAlt } from "react-icons/fa";
-import { act, useEffect } from "react";
-import { CustomTooltip } from "../CustomTooltip";
+import { sendCustomEvent } from "../../utils/send-custom-event";
+import { CustomTooltip } from "../common/custom-tooltip";
 import { LoaderWrapper } from "../common/loader";
 
 interface ProjectProps {}

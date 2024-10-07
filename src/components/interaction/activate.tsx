@@ -3,13 +3,19 @@ import { Web3 } from "web3";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "react-bootstrap";
 
-import type { ArbitrumContractUpdateDto } from "../ProjectInfo";
+import { LoaderWrapper } from "../common/loader";
 import { useStore } from "../../zustand";
 import { ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { log } from "../../utils/logger";
-import { LoaderWrapper } from "../common/loader";
 
 const ACTIVATION_TO_ADDR = "0x0000000000000000000000000000000000000071";
+
+interface ArbitrumContractUpdateDto {
+  chainId: string;
+  address: string;
+  activationHash: string;
+  activationTimestamp: number;
+}
 
 interface ActivateProps {}
 export const Activate = ({}: ActivateProps) => {

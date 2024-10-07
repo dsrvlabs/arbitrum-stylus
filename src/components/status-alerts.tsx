@@ -1,7 +1,9 @@
-import { Alert } from "react-bootstrap";
-import AlertCloseButton from "./AlertCloseButton";
-import { useStore } from "../zustand";
+import type { HTMLAttributes } from "react";
+import { Alert, Button } from "react-bootstrap";
+import { IoMdClose } from "react-icons/io";
 import { useShallow } from "zustand/react/shallow";
+
+import { useStore } from "../zustand";
 
 interface StatusAlertsProps {}
 export const StatusAlerts = ({}: StatusAlertsProps) => {
@@ -28,5 +30,35 @@ export const StatusAlerts = ({}: StatusAlertsProps) => {
         </Alert>
       )}
     </div>
+  );
+};
+
+interface AlertCloseButtonProps extends HTMLAttributes<HTMLButtonElement> {
+  className?: string;
+  onClick: () => void;
+  [key: string]: any;
+}
+const AlertCloseButton = ({ onClick, ...props }: AlertCloseButtonProps) => {
+  return (
+    <Button
+      onClick={onClick}
+      style={{
+        background: "none",
+        color: "inherit",
+        border: "none",
+        padding: 0,
+        cursor: "pointer",
+        font: "inherit",
+        outline: "inherit",
+      }}
+      {...props}
+    >
+      <IoMdClose
+        style={{
+          width: "18px",
+          height: "18px",
+        }}
+      />
+    </Button>
   );
 };

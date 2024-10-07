@@ -1,6 +1,7 @@
 import { Alert } from "react-bootstrap";
-import { useStore } from "../../zustand";
 import { useShallow } from "zustand/react/shallow";
+
+import { useStore } from "../../zustand";
 
 interface ContractAlertProps {}
 export const ContractAlert = ({}: ContractAlertProps) => {

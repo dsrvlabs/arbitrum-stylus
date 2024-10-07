@@ -1,14 +1,24 @@
-import { useState } from "react";
 import axios from "axios";
 import { type AbiItem, Web3 } from "web3";
 import { Button } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
-import { ArbitrumContractCreateDto } from "../ProjectInfo";
 import { LoaderWrapper } from "../common/loader";
 import { useStore } from "../../zustand";
 import { COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { log } from "../../utils/logger";
+
+interface ArbitrumContractCreateDto {
+  chainId: string;
+  account: string;
+  address: string;
+  compileTimestamp: number;
+  deployTimestamp: number;
+  txHash: string;
+  isSrcUploaded: boolean;
+  status: string;
+  cliVersion: string | null;
+}
 
 interface DeployProps {}
 export const Deploy = ({}: DeployProps) => {

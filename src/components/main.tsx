@@ -1,17 +1,17 @@
+import { Button } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
-import { DocumentationButton } from "./DocumentationButton";
-import { MakeAIssueButton } from "./MakeAIssueButton";
 import { Header } from "./header";
 import { ConnectMetmask } from "./connect-metamask";
-import { NetworkWarn } from "./NetworkWarn";
 
-import { useStore } from "../zustand";
-import { ARBITRUM_NETWORK } from "../const/network";
 import { Project } from "./project";
 import { StatusAlerts } from "./status-alerts";
 import { Interaction } from "./interaction";
 import { Contracts } from "./contracts";
+import { useStore } from "../zustand";
+import { ARBITRUM_NETWORK, ARBITRUM_ONE, ARBITRUM_SEPOLIA } from "../const/network";
+import Github from "../assets/github-mark-light-64px.png";
+import Welldone from "../assets/dsrv_wallet_icon.png";
 
 export const initButtonStatus = {
   active: false,
@@ -60,11 +60,47 @@ export const Main = ({}: InterfaceProps) => {
             <Contracts />
           </>
         ) : (
-          <NetworkWarn />
+          <small className="text-red-500 font-bold">
+            {ARBITRUM_ONE.chainName} and {ARBITRUM_SEPOLIA.chainName} network is supported currently.
+            <br />
+            Please switch to the network below and reconnect your wallet.
+            <br />
+            <br />
+            Arbitrum One
+            <br />
+            Chain ID: 42161
+            <br />
+            RPC URL: https://arb1.arbitrum.io/rpc
+            <br />
+            <br />
+            Arbitrum Sepolia
+            <br />
+            Chain ID: 421614
+            <br />
+            RPC URL: https://sepolia-rollup.arbitrum.io/rpc
+            <br />
+          </small>
         )}
       </div>
-      <DocumentationButton />
-      <MakeAIssueButton />
+      <Button
+        className="w-full flex justify-center items-center"
+        variant="secondary"
+        onClick={() => {
+          window.open("https://docs.welldonestudio.io/code");
+        }}
+      >
+        <img src={Welldone} style={{ width: "35px", marginRight: "20px" }} alt="Github logo" />
+        <b>Documentation</b>
+      </Button>
+      <Button
+        className="w-full flex justify-center items-center"
+        onClick={() => {
+          window.open("https://github.com/dsrvlabs/wds-code-remix/issues");
+        }}
+      >
+        <img src={Github} style={{ width: "35px", marginRight: "20px" }} alt="Github logo" />
+        <b>Make an issue</b>
+      </Button>
     </div>
   );
 };

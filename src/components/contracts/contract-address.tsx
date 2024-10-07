@@ -1,8 +1,9 @@
-import { useShallow } from "zustand/react/shallow";
-import { useStore } from "../../zustand";
-import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { sendCustomEvent } from "../../utils/sendCustomEvent";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
+
+import { useStore } from "../../zustand";
+import { sendCustomEvent } from "../../utils/send-custom-event";
 import { LoaderWrapper } from "../common/loader";
 
 interface ContractAddressProps {}

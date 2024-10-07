@@ -5,34 +5,33 @@ import { type AbiItem, Web3 } from "web3";
 import stripAnsi from "strip-ansi";
 import BigNumber from "bignumber.js";
 import { Button } from "react-bootstrap";
-import { FaSyncAlt } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
-
-import { useStore } from "../../zustand";
-import { FileInfo, FileUtil } from "../../utils/FileUtil";
-import { log } from "../../utils/logger";
-import { isEmptyList } from "../../utils/ListUtil";
-import { EditorClient } from "../../utils/editor";
-import { CHAIN_NAME } from "../../const/chain";
-import { ARBITRUM_COMPILER_CONSUMER_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { io, type Socket } from "socket.io-client";
 import { type DisconnectDescription } from "socket.io-client/build/esm/socket";
-import { cleanupSocketArbitrum } from "../../utils/socket";
 import {
   compileIdV2,
   COMPILER_ARBITRUM_COMPILE_ERROR_OCCURRED_V1,
   COMPILER_ARBITRUM_COMPILE_LOGGED_V1,
   COMPILER_ARBITRUM_COMPILE_COMPLETED_V1,
+  REMIX_ARBITRUM_COMPILE_REQUESTED_V1,
   type CompilerArbitrumCompileLoggedV1,
   type CompilerArbitrumCompileErrorOccurredV1,
   type CompilerArbitrumCompileCompletedV1,
   type RemixArbitrumCompileRequestedV1,
-  REMIX_ARBITRUM_COMPILE_REQUESTED_V1,
 } from "wds-event";
+
+import { LoaderWrapper } from "../common/loader";
+import { useStore } from "../../zustand";
+import { FileInfo, FileUtil } from "../../utils/file-utils";
+import { log } from "../../utils/logger";
+import { isEmptyList } from "../../utils/list-utils";
+import { EditorClient } from "../../utils/editor";
+import { CHAIN_NAME } from "../../const/chain";
+import { ARBITRUM_COMPILER_CONSUMER_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
+import { cleanupSocketArbitrum } from "../../utils/socket";
 import { getPositionDetails, isRealError, stringify } from "../../const/helper";
 import { S3Path } from "../../const/s3-path";
 import { BUILD_FILE_TYPE } from "../../const/build-file-type";
-import { LoaderWrapper } from "../common/loader";
 
 const RCV_EVENT_LOG_PREFIX = `[==> EVENT_RCV]`;
 const SEND_EVENT_LOG_PREFIX = `[EVENT_SEND ==>]`;

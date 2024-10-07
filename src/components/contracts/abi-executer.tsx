@@ -1,16 +1,16 @@
-import { useShallow } from "zustand/react/shallow";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
+import { FaCopy, FaExternalLinkAlt, FaTrashAlt } from "react-icons/fa";
+import { renderToString } from "react-dom/server";
+import { Accordion, Button, Card, Form, InputGroup, useAccordionButton } from "react-bootstrap";
+import Web3, { AbiFragment, AbiFunctionFragment, AbiParameter } from "web3";
+import copy from "copy-to-clipboard";
+import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "../../zustand";
-import { Accordion, Button, Card, Form, InputGroup, useAccordionButton } from "react-bootstrap";
 import { ARBITRUM_NETWORK } from "../../const/network";
-import { FaCopy, FaExternalLinkAlt, FaTrashAlt } from "react-icons/fa";
-import Web3, { AbiFragment, AbiFunctionFragment, AbiParameter } from "web3";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { CallResultAsString, RenderTransactionsAsString } from "../RenderTransactions";
-import { renderToString } from "react-dom/server";
+import { CallResultAsString, RenderTransactionsAsString } from "../../utils/format-transaction";
 import { log } from "../../utils/logger";
-import copy from "copy-to-clipboard";
 import { LoaderWrapper } from "../common/loader";
 
 const isFunctionFragment = (abi: AbiFragment): abi is AbiFunctionFragment => abi.type === "function";
@@ -25,8 +25,6 @@ export const AbiExecuter = ({}: AbiExecuterProps) => {
       setContractAddresses: state.contract.setContractAddresses,
     }))
   );
-  const [cssEnable, setCssEnable] = useState<boolean>(false);
-
   const handleCssTransitionOnExited = (address: string) => {
     const addressesFiltered = contractAddresses.filter((item) => item !== address);
     setContractAddresses(addressesFiltered);

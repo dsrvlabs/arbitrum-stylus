@@ -1,8 +1,9 @@
-import { Badge } from "react-bootstrap";
-import { EditorClient } from "../utils/editor";
-import RefreshButton from "./RefreshButton";
-import { useStore } from "../zustand";
+import { IoMdRefresh } from "react-icons/io";
+import { Badge, Button } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
+
+import { EditorClient } from "../utils/editor";
+import { useStore } from "../zustand";
 
 interface HeaderProps {}
 export const Header = ({}: HeaderProps) => {
@@ -39,7 +40,25 @@ export const Header = ({}: HeaderProps) => {
             issues
           </Badge>
         </a>
-        <RefreshButton handleRefresh={handleRefresh} />
+        <Button
+          onClick={handleRefresh}
+          style={{
+            background: "none",
+            color: "inherit",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            font: "inherit",
+            outline: "inherit",
+          }}
+        >
+          <IoMdRefresh
+            style={{
+              width: "18px",
+              height: "18px",
+            }}
+          />
+        </Button>
       </div>
     </div>
   );
