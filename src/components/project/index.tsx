@@ -8,11 +8,12 @@ import wrapPromise from "../../utils/wrapPromise";
 import { log } from "../../utils/logger";
 import { sendCustomEvent } from "../../utils/sendCustomEvent";
 import { FaSyncAlt } from "react-icons/fa";
-import { useEffect } from "react";
+import { act, useEffect } from "react";
+import { CustomTooltip } from "../CustomTooltip";
+import { LoaderWrapper } from "../common/loader";
 
 interface ProjectProps {}
 export const Project = ({}: ProjectProps) => {
-  console.log("project rerender");
   const { fetchProjects } = useStore(useShallow((state) => ({ fetchProjects: state.project.fetchProjects })));
 
   useEffect(() => {
@@ -29,32 +30,63 @@ export const Project = ({}: ProjectProps) => {
         <Template />
         <TargetProject />
       </Form>
+      <UploadCode />
     </div>
   );
 };
 
 const Network = () => {
-  console.log("project network rerender");
-  const { project, account, network, networks } = useStore(
+  const {
+    resetAccount,
+    network,
+    setNetwork,
+    networks,
+    compileLoading,
+    resetCompile,
+    deployLoading,
+    resetDeploy,
+    activateLoading,
+    resetActivate,
+    resetContract,
+  } = useStore(
     useShallow((state) => ({
-      project: state.project,
-      account: state.account,
+      resetAccount: state.account.reset,
       network: state.project.network.data,
+      setNetwork: state.project.setNetwork,
       networks: state.project.networks.data,
+      compileLoading: state.compile.loading,
+      resetCompile: state.compile.reset,
+      deployLoading: state.deploy.loading,
+      resetDeploy: state.deploy.reset,
+      activateLoading: state.activate.loading,
+      resetActivate: state.activate.reset,
+      resetContract: state.contract.reset,
     }))
   );
+  const isLoading = compileLoading || deployLoading || activateLoading;
 
   const handleNetworkOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const network = networks.find((item) => item.chainId === event.target.value);
     if (network) {
-      project.setNetwork(network);
-      account.reset();
+      setNetwork(network);
+      resetAccount();
+      resetCompile();
+      resetDeploy();
+      resetActivate();
+      resetContract();
     }
   };
   return (
     <Form.Group>
       <Form.Label>Network</Form.Label>
-      <Form.Control as="select" value={network.chainId} size="sm" onChange={handleNetworkOnChange}>
+      <Form.Control
+        as="select"
+        className="disabled:!text-gray-400 disabled:cursor-not-allowed"
+        value={network.chainId}
+        size="sm"
+        disabled={isLoading}
+        onChange={handleNetworkOnChange}
+      >
         {networks.map((item) => (
           <option key={item.chainId} value={item.chainId}>
             {item.chainName}
@@ -66,7 +98,6 @@ const Network = () => {
 };
 
 const Account = () => {
-  console.log("project account rerender");
   const { address } = useStore(useShallow((state) => ({ address: state.account.address.data })));
   return (
     <Form.Group>
@@ -77,7 +108,6 @@ const Account = () => {
 };
 
 const Balance = () => {
-  console.log("project balance rerender");
   const { balance } = useStore(useShallow((state) => ({ balance: state.account.balance.data })));
   return (
     <Form.Group>
@@ -88,17 +118,21 @@ const Balance = () => {
 };
 
 const NewProject = () => {
-  console.log("project new project rerender");
-  const { client, projects, fetchProjects, setProject, name, setName } = useStore(
-    useShallow((state) => ({
-      client: state.global.client,
-      name: state.project.name.data,
-      setName: state.project.setName,
-      setProject: state.project.setProject,
-      projects: state.project.projects.data,
-      fetchProjects: state.project.fetchProjects,
-    }))
-  );
+  const { client, projects, fetchProjects, setProject, name, setName, compileLoading, deployLoading, activateLoading } =
+    useStore(
+      useShallow((state) => ({
+        client: state.global.client,
+        name: state.project.name.data,
+        setName: state.project.setName,
+        setProject: state.project.setProject,
+        projects: state.project.projects.data,
+        fetchProjects: state.project.fetchProjects,
+        compileLoading: state.compile.loading,
+        deployLoading: state.deploy.loading,
+        activateLoading: state.activate.loading,
+      }))
+    );
+  const isLoading = compileLoading || deployLoading || activateLoading;
 
   const isExists = async (dir: string) => {
     if (!client) return false;
@@ -160,8 +194,15 @@ const NewProject = () => {
             if (event.key === "Enter") event.preventDefault();
           }}
         />
-        <Button variant="success" size="sm" onClick={wrappedCreateProject}>
+        <Button
+          className="relative border-0"
+          variant="success"
+          size="sm"
+          disabled={isLoading}
+          onClick={wrappedCreateProject}
+        >
           <small>Create</small>
+          <LoaderWrapper loading={isLoading} />
         </Button>
       </InputGroup>
     </Form.Group>
@@ -169,17 +210,20 @@ const NewProject = () => {
 };
 
 const Template = () => {
-  console.log("project template rerender");
-  const { client, template, setTemplate, templates, fetchProjects, setProject } = useStore(
-    useShallow((state) => ({
-      client: state.global.client,
-      template: state.project.template.data,
-      setTemplate: state.project.setTemplate,
-      templates: state.project.templates.data,
-      fetchProjects: state.project.fetchProjects,
-      setProject: state.project.setProject,
-    }))
-  );
+  const { client, template, setTemplate, templates, fetchProjects, compileLoading, deployLoading, activateLoading } =
+    useStore(
+      useShallow((state) => ({
+        client: state.global.client,
+        template: state.project.template.data,
+        setTemplate: state.project.setTemplate,
+        templates: state.project.templates.data,
+        fetchProjects: state.project.fetchProjects,
+        compileLoading: state.compile.loading,
+        deployLoading: state.deploy.loading,
+        activateLoading: state.activate.loading,
+      }))
+    );
+  const isLoading = compileLoading || deployLoading || activateLoading;
 
   const createTemplate = async () => {
     if (!client || !template) return;
@@ -191,20 +235,21 @@ const Template = () => {
     const isExists = async (dir: string) => {
       if (!client) return false;
       try {
-        log.debug(await client.fileManager.readdir("browser/arbitrum/" + dir));
-        return true;
+        const result = await client.fileManager.readdir("browser/arbitrum/" + dir);
+        if (Object.keys(result).length > 0 && result.constructor === Object) {
+          return true;
+        }
+        return false;
       } catch (e) {
         log.error(e);
         return false;
       }
     };
 
-    const wrappedIsExists = (dir: string) => wrapPromise(isExists(dir), client);
-
-    if (await wrappedIsExists(template)) {
+    if (await isExists(template)) {
       await client.terminal.log({
         type: "error",
-        value: `The folder "arbitrum/${template} already exists`,
+        value: `The folder ${template} already exists`,
       });
       return;
     }
@@ -231,7 +276,6 @@ const Template = () => {
         }
       });
       await fetchProjects();
-      setProject(template);
 
       await client.terminal.log({ type: "info", value: template + " is created successfully." });
     } catch (e) {
@@ -244,11 +288,18 @@ const Template = () => {
   const handleTemplateOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTemplate(event.target.value);
   };
+
   return (
     <Form.Group>
       <Form.Label>Select a Template</Form.Label>
       <InputGroup>
-        <Form.Control className="custom-select" as="select" value={template ?? ""} onChange={handleTemplateOnChange}>
+        <Form.Control
+          className="custom-select"
+          as="select"
+          size="sm"
+          value={template ?? ""}
+          onChange={handleTemplateOnChange}
+        >
           {templates &&
             templates.map((temp, idx) => {
               return (
@@ -258,8 +309,15 @@ const Template = () => {
               );
             })}
         </Form.Control>
-        <Button variant="success" size="sm" onClick={wrappedCreateTemplate}>
+        <Button
+          className="relative border-0"
+          variant="success"
+          size="sm"
+          disabled={isLoading}
+          onClick={wrappedCreateTemplate}
+        >
           <small>Create</small>
+          <LoaderWrapper loading={isLoading} />
         </Button>
       </InputGroup>
     </Form.Group>
@@ -267,19 +325,45 @@ const Template = () => {
 };
 
 const TargetProject = () => {
-  console.log("project target project rerender");
-  const { fetchProjects, projects, project, setProject } = useStore(
+  const {
+    fetchProjects,
+    projects,
+    project,
+    setProject,
+    resetCompile,
+    resetDeploy,
+    resetActivate,
+    compileLoading,
+    deployLoading,
+    activateLoading,
+    setAddress,
+  } = useStore(
     useShallow((state) => ({
       fetchProjects: state.project.fetchProjects,
       projects: state.project.projects.data,
       project: state.project.project.data,
       setProject: state.project.setProject,
+      resetCompile: state.compile.reset,
+      resetDeploy: state.deploy.reset,
+      resetActivate: state.activate.reset,
+      compileLoading: state.compile.loading,
+      deployLoading: state.deploy.loading,
+      activateLoading: state.activate.loading,
+      setAddress: state.contract.setAddress,
     }))
   );
+  const isLoading = compileLoading || deployLoading || activateLoading;
 
   const handleTargetProjectOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setProject(event.target.value);
   };
+
+  useEffect(() => {
+    resetCompile();
+    resetDeploy();
+    resetActivate();
+    setAddress(null);
+  }, [project]);
 
   return (
     <Form.Group>
@@ -289,11 +373,13 @@ const TargetProject = () => {
           <FaSyncAlt />
         </span>
       </Form.Text>
+
       <InputGroup>
         <Form.Control
-          className="custom-select"
+          className="custom-select disabled:!text-gray-400 disabled:cursor-not-allowed"
           as="select"
           value={project ?? ""}
+          disabled={isLoading}
           onChange={handleTargetProjectOnChange}
         >
           {projects &&
@@ -307,5 +393,36 @@ const TargetProject = () => {
         </Form.Control>
       </InputGroup>
     </Form.Group>
+  );
+};
+
+const UploadCode = () => {
+  const { upload, setUpload } = useStore(
+    useShallow((state) => ({ upload: state.project.upload.data, setUpload: state.project.setUpload }))
+  );
+
+  const handleUploadOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUpload(event.target.checked);
+  };
+
+  return (
+    <div className="form-check">
+      <input
+        type="checkbox"
+        className="form-check-input"
+        id="uploadCodeCheckbox"
+        checked={upload}
+        onChange={handleUploadOnChange}
+      />
+      <CustomTooltip
+        placement="top"
+        tooltipId="overlay-ataddresss"
+        tooltipText="When you upload the code, a code verification feature will be provided in the future."
+      >
+        <label className="form-check-label" htmlFor="uploadCodeCheckbox" style={{ verticalAlign: "top" }}>
+          Upload Code
+        </label>
+      </CustomTooltip>
+    </div>
   );
 };
