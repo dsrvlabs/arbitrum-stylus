@@ -66,19 +66,17 @@ export const Main = ({}: InterfaceProps) => {
             Please switch to the network below and reconnect your wallet.
             <br />
             <br />
-            Arbitrum One
-            <br />
-            Chain ID: 42161
-            <br />
-            RPC URL: https://arb1.arbitrum.io/rpc
-            <br />
-            <br />
-            Arbitrum Sepolia
-            <br />
-            Chain ID: 421614
-            <br />
-            RPC URL: https://sepolia-rollup.arbitrum.io/rpc
-            <br />
+            {ARBITRUM_NETWORK.map((item) => (
+              <div key={item.chainId}>
+                {item.chainName}
+                <br />
+                Chain ID: {item.chainId}
+                <br />
+                RPC URL: {item.blockExplorerUrls}
+                <br />
+                <br />
+              </div>
+            ))}
           </small>
         )}
       </div>
