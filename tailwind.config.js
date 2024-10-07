@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         "metamask-active": "#007aa6",
         "metamask-default": "#2a2c3f",
+        "body-bg": "var(--body-bg)",
       },
     },
   },
