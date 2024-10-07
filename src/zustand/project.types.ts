@@ -11,12 +11,15 @@ export interface ProjectState {
     projects: DataType<string[]>;
     networks: NonNullableDataType<typeof ARBITRUM_NETWORK>;
     network: NonNullableDataType<typeof ARBITRUM_ONE>;
-    setErrorMsg: (msg: string) => void;
+    upload: NonNullableDataType<boolean>;
+    setErrorMsg: (msg: string | null) => void;
     setName: (name: string) => void;
     setTemplate: (template: string) => void;
     // setProjects: (projects: string[]) => void;
     fetchProjects: () => Promise<void>;
     setProject: (project: string) => void;
     setNetwork: (network: typeof ARBITRUM_ONE) => void;
+    setUpload: (upload: boolean) => void;
+    reset: () => void;
   };
 }

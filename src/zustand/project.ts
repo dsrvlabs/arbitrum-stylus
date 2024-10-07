@@ -14,7 +14,7 @@ const initial = {
   template: {
     loading: false,
     error: false,
-    data: null,
+    data: "hello-world",
   },
   templates: {
     loading: false,
@@ -41,12 +41,17 @@ const initial = {
     error: false,
     data: null,
   },
+  upload: {
+    loading: false,
+    error: false,
+    data: true,
+  },
 };
 
 export const createProjectStore: StateCreator<ProjectState & GlobalState, [], [], ProjectState> = (set, get) => ({
   project: {
     ...initial,
-    setErrorMsg: (msg: string) =>
+    setErrorMsg: (msg: string | null) =>
       set(
         produce((state: ProjectState) => {
           state.project.errorMsg = msg;
@@ -87,19 +92,15 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
         })
       );
 
+      const projects: string[] = [];
       const findTomlFileRecursively = async (currentPath: string): Promise<void> => {
         const list = await client.fileManager.readdir(currentPath);
         const hasTomlFile = Object.keys(list).some((item) => item.endsWith("Cargo.toml"));
         if (hasTomlFile) {
           set(
             produce((state: ProjectState) => {
-              state.project.projects.data = [
-                ...new Set([...(state.project.projects.data ?? []), currentPath.replace("browser/", "")]),
-              ];
-              // state.project.projects.data = [
-              //   ...(state.project.projects.data ?? []),
-              //   currentPath.replace("browser/", ""),
-              // ];
+              const targetProject = projects.find((item) => item === currentPath.replace("browser/", ""));
+              if (!targetProject) projects.push(currentPath.replace("browser/", ""));
             })
           );
         }
@@ -114,9 +115,12 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
 
       try {
         await findTomlFileRecursively("browser/arbitrum");
+        const project = get().project.template.data ? `arbitrum/${get().project.template.data}` : projects[0];
         set(
           produce((state: ProjectState) => {
             state.project.projects.loading = false;
+            state.project.projects.data = projects;
+            state.project.project.data = project;
           })
         );
       } catch (error) {
@@ -132,6 +136,18 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
       set(
         produce((state: ProjectState) => {
           state.project.network.data = network;
+        })
+      ),
+    setUpload: (upload) =>
+      set(
+        produce((state: ProjectState) => {
+          state.project.upload.data = upload;
+        })
+      ),
+    reset: () =>
+      set(
+        produce((state: ProjectState) => {
+          state.project = { ...state.project, ...initial };
         })
       ),
   },
