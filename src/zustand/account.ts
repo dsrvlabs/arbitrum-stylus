@@ -1,10 +1,11 @@
 import web3 from "web3";
-import type { StateCreator } from "zustand";
 import { produce } from "immer";
 
+import type { StateCreator } from "zustand";
 import type { AccountState, RpcError } from "./account.types";
 
 const initial = {
+  loading: false,
   errorMsg: null,
   address: {
     loading: false,
@@ -31,7 +32,7 @@ const initial = {
 export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
   account: {
     ...initial,
-    setErrorMsg: (msg: string) =>
+    setErrorMsg: (msg: string | null) =>
       set(
         produce((state: AccountState) => {
           state.account.errorMsg = msg;
@@ -164,12 +165,13 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
             state.account.network.data = network;
           })
         );
+        return network;
       } catch (error) {
         set(
           produce((state: AccountState) => {
             state.account.network.loading = false;
             state.account.network.error = true;
-            if (isRPCError(error)) state.account.network.errorMsg = error.message;
+            if (isRPCError(error)) state.account.errorMsg = error.message;
           })
         );
       }
@@ -188,10 +190,16 @@ export const createAccountStore: StateCreator<AccountState> = (set, get) => ({
         })
       );
     },
+    setLoading: (loading: boolean) =>
+      set(
+        produce((state: AccountState) => {
+          state.account.loading = loading;
+        })
+      ),
     reset: () =>
       set(
         produce((state: AccountState) => {
-          state.account = { ...initial, ...state.account };
+          state.account = { ...state.account, ...initial };
         })
       ),
   },
