@@ -21,7 +21,7 @@ import type { Api } from "@remixproject/plugin-utils";
 import type { IRemixApi } from "@remixproject/plugin-api";
 
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../const/network";
-import { InfoType, initButtonStatus, StatusType } from "./Main";
+import { InfoType, initButtonStatus, StatusType } from "./main";
 import wrapPromise from "../utils/wrapPromise";
 import { sendCustomEvent } from "../utils/sendCustomEvent";
 import { log } from "../utils/logger";
@@ -633,12 +633,12 @@ export const ProjectInfo = ({ client, info, setInfo, status, setStatus, setAlert
           await Promise.all(
             Object.keys(zip.files).map(async (filename) => {
               log.info(`arbitrum build result filename=${filename}`);
-              if (filename.endsWith("output/deployment_tx_data")) {
+              if (filename.endsWith("output/deployment_tx_data.txt")) {
                 const fileData = await zip.files[filename].async("blob");
                 const hex = Buffer.from(await fileData.arrayBuffer()).toString("hex");
                 await client?.fileManager.writeFile("browser/" + projectInfo.compileTarget + "/" + filename, hex);
                 setProjectInfo((prev) => ({ ...prev, deploymentTx: hex, fileName: filename }));
-              } else if (filename.endsWith("output/activation_tx_data")) {
+              } else if (filename.endsWith("output/activation_tx_data.txt")) {
                 const fileData = await zip.files[filename].async("blob");
                 const hex = Buffer.from(await fileData.arrayBuffer()).toString("hex");
                 await client?.fileManager.writeFile("browser/" + projectInfo.compileTarget + "/" + filename, hex);
