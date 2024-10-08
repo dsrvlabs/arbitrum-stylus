@@ -122,13 +122,13 @@ export const Activate = ({}: ActivateProps) => {
 
     if (txReceipt.status) {
       setActivated(true);
-      const contract = new web3.eth.Contract(abiItems.abi, address);
-      let name = "";
-      try {
-        name = await contract.methods.name().call();
-      } catch (error) {
-        console.error("Error interacting with contract:", error);
-      }
+      // const contract = new web3.eth.Contract(abiItems.abi, address);
+      // let name = "";
+      // try {
+      //   name = await contract.methods.name().call();
+      // } catch (error) {
+      //   console.error("Error interacting with contract:", error);
+      // }
       setContractAddresses([...contractAddresses, address]);
 
       let activationTimestamp = 0;

@@ -16,6 +16,7 @@ const isRPCError = (error: any): error is RpcError => {
 };
 
 interface ConnectMetmaskProps {}
+// eslint-disable-next-line no-empty-pattern
 export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
   const { provider, network, fetchNetwork, address, fetchAddress, balance, fetchBalance, project, setErrorMsg } =
     useStore(
@@ -127,6 +128,7 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
       provider.data.removeListener("accountsChanged", traceSwitchAccount);
       provider.data.removeListener("chainChanged", traceSwitchNetwork);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -234,8 +234,6 @@ export const Compile = ({}: CompileProps) => {
       return;
     }
 
-    const contents = await FileUtil.contents(client.fileManager, project.data ?? "", projFiles_);
-
     const socket = io(ARBITRUM_COMPILER_CONSUMER_ENDPOINT, {
       reconnection: false,
       transports: ["websocket"],
@@ -308,7 +306,7 @@ export const Compile = ({}: CompileProps) => {
         client.terminal.log({ type: "info", value: stripAnsi(data.logMsg) });
 
         if (data.logMsg.includes("error")) {
-          const { file, annotation, highlightPosition, positionDetail } = getPositionDetails(data.logMsg);
+          const { file, annotation, positionDetail } = getPositionDetails(data.logMsg);
 
           if (file) {
             if (isRealError(annotation)) {

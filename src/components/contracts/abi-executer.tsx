@@ -16,6 +16,7 @@ import { LoaderWrapper } from "../common/loader";
 const isFunctionFragment = (abi: AbiFragment): abi is AbiFunctionFragment => abi.type === "function";
 
 interface AbiExecuterProps {}
+// eslint-disable-next-line no-empty-pattern
 export const AbiExecuter = ({}: AbiExecuterProps) => {
   const { network, abi, contractAddresses, setContractAddresses } = useStore(
     useShallow((state) => ({
