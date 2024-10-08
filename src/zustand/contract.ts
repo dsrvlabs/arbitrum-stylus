@@ -63,10 +63,9 @@ export const createContractStore: StateCreator<ContractState> = (set, get) => ({
         })
       ),
     reset: () =>
-      set(
-        produce((state: ContractState) => {
-          state.contract = { ...state.contract, ...initial };
-        })
-      ),
+      set((state) => ({
+        ...state,
+        contract: { ...initial, ...state.contract },
+      })),
   },
 });

@@ -53,7 +53,10 @@ export const Main = ({}: InterfaceProps) => {
       <StatusAlerts />
       <div className="flex flex-col flex-1 gap-4">
         <ConnectMetmask />
-        {isValidNetwork ? (
+        <Project />
+        <Interaction />
+        <Contracts />
+        {/* {isValidNetwork ? (
           <>
             <Project />
             <Interaction />
@@ -78,7 +81,7 @@ export const Main = ({}: InterfaceProps) => {
               </div>
             ))}
           </small>
-        )}
+        )} */}
       </div>
       <Button
         className="w-full flex justify-center items-center"

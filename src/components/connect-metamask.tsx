@@ -11,7 +11,7 @@ interface RpcError extends Error {
   code: number;
   message: string;
 }
-const isRPCError = (error: any): error is RpcError => {
+export const isRPCError = (error: any): error is RpcError => {
   return typeof error === "object" && error !== null && "code" in error && "message" in error;
 };
 
@@ -42,27 +42,27 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
    * 3. project의 network값이 변경된다면 user의 network값도 변경
    */
   const getAccountInfo = async () => {
-    if (!provider.data) {
-      setErrorMsg("Metamask is not installed. Please install Metamask to continue.");
-      return;
-    }
-    //FIXME: 원래는 account.network.data를 인자값으로 사용해야 하나,
-    // zustand에서 fetchNetwork를 통해 store 내부의 network.data 값을 변경하여도
-    // 함수 내부에서 로직이 실행될 때 초기에 account.network.data를 정의할 때 가져온 값이 그대로 사용되는 문제가 있음
-    // 즉, fetchNetwork로 인해 값이 변경되었음에도 초기값인 null값이 사용됨
-    // 따라서 로직에서 변경된 network 값을 return을 통해 반환하여 사용하도록 수정함
     const networkFetched = await fetchNetwork();
     const arbitrumNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === networkFetched);
+    console.log("networkFetched", networkFetched);
+    console.log("arbitrumNetwork", arbitrumNetwork);
     if (arbitrumNetwork) {
+      console.log("arbitrumNetwork is exist");
       project.setNetwork(arbitrumNetwork);
       await fetchAddress();
       await fetchBalance();
     } else {
-      await switchNetwork(project.network.data.chainId);
-      await fetchAddress();
-      await fetchBalance();
+      console.log("traceSwitchProjectNetwork");
+      traceSwitchProjectNetwork();
     }
   };
+
+  const traceSwitchProjectNetwork = async () => {
+    await switchNetwork(project.network.data.chainId);
+    await fetchAddress();
+    await fetchBalance();
+  };
+
   const switchNetwork = async (chainId = ARBITRUM_ONE.chainId) => {
     const targetNetwork = ARBITRUM_NETWORK.find((network) => network.chainId === chainId);
     if (!targetNetwork) {

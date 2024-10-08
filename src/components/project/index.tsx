@@ -11,6 +11,8 @@ import { log } from "../../utils/logger";
 import { sendCustomEvent } from "../../utils/send-custom-event";
 import { CustomTooltip } from "../common/custom-tooltip";
 import { LoaderWrapper } from "../common/loader";
+import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../../const/network";
+import { isRPCError } from "../connect-metamask";
 
 interface ProjectProps {}
 export const Project = ({}: ProjectProps) => {
@@ -37,6 +39,11 @@ export const Project = ({}: ProjectProps) => {
 
 const Network = () => {
   const {
+    provider,
+    fetchNetwork,
+    fetchAddress,
+    fetchBalance,
+    setErrorMsg,
     resetAccount,
     network,
     setNetwork,
@@ -50,6 +57,11 @@ const Network = () => {
     resetContract,
   } = useStore(
     useShallow((state) => ({
+      provider: state.account.provider,
+      fetchAddress: state.account.fetchAddress,
+      fetchBalance: state.account.fetchBalance,
+      fetchNetwork: state.account.fetchNetwork,
+      setErrorMsg: state.account.setErrorMsg,
       resetAccount: state.account.reset,
       network: state.project.network.data,
       setNetwork: state.project.setNetwork,
@@ -65,15 +77,51 @@ const Network = () => {
   );
   const isLoading = compileLoading || deployLoading || activateLoading;
 
+  const switchNetwork = async (chainId = ARBITRUM_ONE.chainId) => {
+    if (!provider) return;
+    const targetNetwork = ARBITRUM_NETWORK.find((network) => network.chainId === chainId);
+    try {
+      await provider.data?.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
+    } catch (error) {
+      let message: string | null = "Failed to switch network. Please try again.";
+      if (isRPCError(error)) {
+        message = error.message;
+        if (error.message.includes("already pending")) message = null;
+      }
+
+      if (typeof error === "object" && error !== null && "code" in error) {
+        if (error.code === 4902) {
+          try {
+            await provider.data?.request({ method: "wallet_addEthereumChain", params: [targetNetwork] });
+            message = null;
+            return;
+          } catch (error) {
+            message = "Failed to add network. Please try again.";
+            if (isRPCError(error)) {
+              message = error.message;
+            }
+          }
+        }
+      }
+      setErrorMsg(message);
+    } finally {
+      await fetchNetwork();
+      await fetchAddress();
+      await fetchBalance();
+    }
+  };
+
   const handleNetworkOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const network = networks.find((item) => item.chainId === event.target.value);
+    console.log("network", network);
     if (network) {
-      setNetwork(network);
       resetAccount();
       resetCompile();
       resetDeploy();
       resetActivate();
       resetContract();
+      setNetwork(network);
+      switchNetwork(network.chainId);
     }
   };
   return (
@@ -369,7 +417,7 @@ const TargetProject = () => {
     <Form.Group>
       <Form.Text className="flex gap-1 text-muted">
         <Form.Label>Target Project</Form.Label>
-        <span onClick={fetchProjects}>
+        <span className="cursor-pointer" onClick={fetchProjects}>
           <FaSyncAlt />
         </span>
       </Form.Text>
