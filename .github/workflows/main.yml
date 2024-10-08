@@ -1,0 +1,42 @@
+name: wds-code-front-arbitrum-deploy
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  REACT_APP_STAGE: ${{secrets.REACT_APP_STAGE}}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: "us-east-2"
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::116580135187:role/wds-code-remix-github-action-s3-deploy
+          role-session-name: wds-code-remix-github-action-s3-deploy
+          aws-region: us-east-2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: After Build
+        run: npm run postbuild
+
+      - name: Upload file to S3 bucket
+        run: aws s3 sync ./build s3://${{ secrets.AWS_S3_BUCKET }}
+
+      - name: Invalidate cache CloudFront
+        run: aws cloudfront create-invalidation --distribution-id ${{secrets.DISTRIBUTION_ID}} --paths "/*"
