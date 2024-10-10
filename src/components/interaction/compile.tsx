@@ -44,9 +44,11 @@ export const Compile = ({}: CompileProps) => {
     account,
     errorMsg,
     compileLoading,
+    fileName,
     setLoading,
     resetCompile,
     setTimestamp,
+    setFileName,
     setCompileErrorMsg,
     project,
     upload,
@@ -66,9 +68,11 @@ export const Compile = ({}: CompileProps) => {
       account: state.account.address.data,
       errorMsg: state.compile.errorMsg,
       compileLoading: state.compile.loading,
+      fileName: state.compile.fileName,
       resetCompile: state.compile.reset,
       setLoading: state.compile.setLoading,
       setTimestamp: state.compile.setTimestamp,
+      setFileName: state.compile.setFileName,
       setCompileErrorMsg: state.compile.setErrorMsg,
       project: state.project.project,
       upload: state.project.upload,
@@ -83,7 +87,7 @@ export const Compile = ({}: CompileProps) => {
       setAddress: state.contract.setAddress,
     }))
   );
-  const [fileName, setFileName] = useState<string>("");
+  // const [fileName, setFileName] = useState<string>("");
   const isLoading = compileLoading || deployLoading || activateLoading;
 
   const handleCompileOnClick = async () => {

@@ -1,11 +1,11 @@
 export interface CompileState {
   compile: {
+    fileName: string | null;
+    timestamp: number | null;
     loading: boolean;
     errorMsg: string | null;
-    projectFiles: any;
-    timestamp: number;
-    setProjectFiles: (projectFiles: any) => void;
-    setTimestamp: (timestamp: number) => void;
+    setFileName: (fileName: string | null) => void;
+    setTimestamp: (timestamp: number | null) => void;
     setErrorMsg: (msg: string | null) => void;
     setLoading: (loading: boolean) => void;
     reset: () => void;

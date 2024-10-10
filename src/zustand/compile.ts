@@ -3,22 +3,22 @@ import { CompileState } from "./compile.types";
 import { produce } from "immer";
 
 const initial = {
+  fileName: null,
+  timestamp: null,
   loading: false,
   errorMsg: null,
-  projectFiles: [],
-  timestamp: 0,
 };
 
 export const createCompileStore: StateCreator<CompileState> = (set) => ({
   compile: {
     ...initial,
-    setProjectFiles: (projectFiles: any) =>
+    setFileName: (fileName: string | null) =>
       set(
         produce((state: CompileState) => {
-          state.compile.projectFiles = projectFiles;
+          state.compile.fileName = fileName;
         })
       ),
-    setTimestamp: (timestamp: number) =>
+    setTimestamp: (timestamp: number | null) =>
       set(
         produce((state: CompileState) => {
           state.compile.timestamp = timestamp;
