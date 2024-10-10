@@ -16,7 +16,6 @@ export const isRPCError = (error: any): error is RpcError => {
 };
 
 interface ConnectMetmaskProps {}
-// eslint-disable-next-line no-empty-pattern
 export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
   const { provider, network, fetchNetwork, address, fetchAddress, balance, fetchBalance, project, setErrorMsg } =
     useStore(
@@ -44,15 +43,11 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
   const getAccountInfo = async () => {
     const networkFetched = await fetchNetwork();
     const arbitrumNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === networkFetched);
-    console.log("networkFetched", networkFetched);
-    console.log("arbitrumNetwork", arbitrumNetwork);
     if (arbitrumNetwork) {
-      console.log("arbitrumNetwork is exist");
       project.setNetwork(arbitrumNetwork);
       await fetchAddress();
       await fetchBalance();
     } else {
-      console.log("traceSwitchProjectNetwork");
       traceSwitchProjectNetwork();
     }
   };
@@ -128,7 +123,6 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
       provider.data.removeListener("accountsChanged", traceSwitchAccount);
       provider.data.removeListener("chainChanged", traceSwitchNetwork);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

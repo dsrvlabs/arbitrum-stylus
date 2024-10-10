@@ -113,7 +113,6 @@ const Network = () => {
 
   const handleNetworkOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const network = networks.find((item) => item.chainId === event.target.value);
-    console.log("network", network);
     if (network) {
       resetAccount();
       resetCompile();

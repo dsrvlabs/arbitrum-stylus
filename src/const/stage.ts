@@ -1,8 +1,8 @@
-type Stage = 'local' | 'dev' | 'prod';
+type Stage = "local" | "dev" | "prod";
 
-export const LOCAL: Stage = 'local';
-export const DEVELOP: Stage = 'dev';
-export const PROD: Stage = 'prod';
+export const LOCAL: Stage = "local";
+export const DEVELOP: Stage = "dev";
+export const PROD: Stage = "prod";
 
 let stage = process.env.REACT_APP_STAGE;
 if (stage === PROD) {
@@ -14,5 +14,3 @@ if (stage === PROD) {
 }
 
 export const STAGE: Stage = stage as Stage;
-
-console.log(`STAGE=${STAGE}`);

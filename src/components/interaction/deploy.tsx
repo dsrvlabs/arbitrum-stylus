@@ -83,10 +83,6 @@ export const Deploy = ({}: DeployProps) => {
     }
     setLoading(true);
 
-    console.log({
-      from: account,
-      data: transactionData,
-    });
     let hash;
     try {
       hash = await provider.request<string>({

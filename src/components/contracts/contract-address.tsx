@@ -7,7 +7,6 @@ import { sendCustomEvent } from "../../utils/send-custom-event";
 import { LoaderWrapper } from "../common/loader";
 
 interface ContractAddressProps {}
-// eslint-disable-next-line no-empty-pattern
 export const ContractAddress = ({}: ContractAddressProps) => {
   const { client, contractAddresses, setContractAddresses, abi, setAbi, contractLoading } = useStore(
     useShallow((state) => ({
