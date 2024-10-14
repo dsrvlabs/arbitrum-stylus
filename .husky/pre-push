@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "Running pre-push hook"
+
 # Build 실행 후 결과를 변수에 저장
 build_output=$(npm run build)
 

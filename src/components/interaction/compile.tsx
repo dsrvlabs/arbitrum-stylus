@@ -1,4 +1,3 @@
-import { useState } from "react";
 import JSZip from "jszip";
 import axios from "axios";
 import { type AbiItem, Web3 } from "web3";
