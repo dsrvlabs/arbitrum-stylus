@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+<div align="center">
+  <h1>Arbitrum Stylus Remix Plugin by Welldone Studio</h1>
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- markdownlint-disable -->
+<div align="center">
+  <img src="public/docs/Icon-b-default.svg" height="256/>
+</div>
 
-## Available Scripts
+<div align="center">
+  
+[![Static Badge](https://img.shields.io/badge/Try_it_out!-2f6df2)](https://remix.ethereum.org/#activate=arbitrum-stylus)
 
-In the project directory, you can run:
+</div>
 
-### `npm start`
+Wellcome to the Arbitrum stylus remix plugin repository.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This tool is the best solution for deploying smart contracts written in languages like Rust through Arbitrum Stylus in Remix IDE. As long as you write your smart contract in a language that can be compiled to WASM here, you will be able to compile, deploy, activate, and even directly execute the contract through Stylus.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+<details> 
+<summary>Table of Contents</summary>
 
-### `npm test`
+</details>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Installation and Setup
 
-### `npm run build`
+1. Installation: You don't need to install anything. If you want to use our plugin, simply go to the plugin manager in Remix IDE and search for "Arbitrum Stylus." If you prefer to use it without searching, you can click [this direct link](https://remix.ethereum.org/#activate=arbitrum-stylus) for a faster and easier experience.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Usage: Once you access the plugin, your wallet will automatically connect. After that, users can either write their own contracts or load examples of pre-written contracts through the templates provided. For more detailed information, please refer to the usage section below.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<div>
+  <img src="public/docs/account.png" height="512" />
+  <img src="public/docs/project.png" height="512" />
+</div>
 
-### `npm run eject`
+#### Running the Plugin
+1. Activate the plugin in Remix IDE. You can either access it via [this direct link](https://remix.ethereum.org/#activate=arbitrum-stylus) or go to the plugin manager in Remix IDE and search for "Arbitrum Stylus" to activate it.
+2. Upon accessing, the wallet address and balance can be automatically retrieved through MetaMask connected to the Arbitrum network. If MetaMask is not connected to the Arbitrum network, it will automatically switch to the mainnet. If the mainnet information is not available, it will be automatically added.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Writing a Smart Contract
+1. Create a new project under the arbitrum/ directory, or use the "Create Template" option to automatically generate a Rust-based project.
+2. Write your smart contract in a language supported by Arbitrum Stylus (any language that can be compiled to WASM).
+3. Before deployment, ensure that the network selected on the left panel is the one you intend to deploy to.
+4. Once the smart contract code is complete, select the contract you wish to deploy from the target template and click the Compile button. After compilation, the bytecode for deployment will be generated as a deployment_tx_data.txt file in the output folder of the respective directory.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<img src="public/docs/execute.png" height="512" />
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+#### Deploying and Activating the Smart Contract
+1. Once the contract is successfully compiled, a Deploy button will appear below the Compile button. Click the Deploy button to deploy your contract.
+2. After a successful deployment, the contract address will be displayed below the button, allowing you to check the deployed contract on an explorer.
+3. If activation is required, click the Activate button to send an activation transaction, which is necessary to use the contract. If the contract is already activated, an interaction tab will be available for you to start interacting with the contract.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+<img src="public/docs/interact.png" height="512" />
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+####  Interacting with the Smart Contract
+1. You can interact with the deployed smart contract through the Contracts section in the Remix IDE plugin.
+2. Once deployment or activation is complete, an interaction tab will be generated in the Contracts section, where you can see all the contracts you have deployed.
+3. Alternatively, you can manually register the contract by entering the address and ABI directly.
+4. You can select the desired contract to interact with. The most recently deployed contract address will be shown below the deploy button, so you can find the corresponding contract tab to interact with it.
+5. The list of functions in the contract will be displayed, and you can provide input values and invoke the functions as needed.
