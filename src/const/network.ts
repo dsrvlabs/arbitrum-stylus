@@ -12,4 +12,11 @@ export const ARBITRUM_SEPOLIA = {
   blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
 };
 
-export const ARBITRUM_NETWORK = [ARBITRUM_ONE, ARBITRUM_SEPOLIA];
+export const OPEN_CAMPUS_CODEX = {
+  chainName: "Open Campus Codex",
+  chainId: "0xa045c",
+  rpcUrls: ["	https://rpc.open-campus-codex.gelato.digital"],
+  blockExplorerUrls: ["https://opencampus-codex.blockscout.com/"],
+};
+
+export const ARBITRUM_NETWORK = [ARBITRUM_ONE, ARBITRUM_SEPOLIA, OPEN_CAMPUS_CODEX];
