@@ -1,11 +1,14 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# 빌드 실행
-npm run build
+# Build 실행 후 결과를 변수에 저장
+build_output=$(npm run build)
+
+# 빌드 결과 출력
+echo "$build_output"
 
 # 빌드에서 경고가 발생했는지 확인
-if npm run build | grep -q 'warnings'; then
+if echo "$build_output" | grep -q 'Compiled with warnings'; then
   echo "Build contains warnings. Push rejected."
   exit 1
 fi
