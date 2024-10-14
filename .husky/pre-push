@@ -1,4 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# 빌드 실행
 npm run build
+
+# 빌드에서 경고가 발생했는지 확인
+if npm run build | grep -q 'warnings'; then
+  echo "Build contains warnings. Push rejected."
+  exit 1
+fi
