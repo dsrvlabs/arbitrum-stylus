@@ -6,6 +6,7 @@
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
     "@metamask/providers": "^17.2.0",
+    "@metamask/utils": "^9.3.0",
     "@remixproject/plugin": "^0.3.38",
     "@remixproject/plugin-api": "^0.3.38",
     "@remixproject/plugin-iframe": "^0.3.38",

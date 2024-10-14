@@ -19,7 +19,7 @@ const initial = {
   templates: {
     loading: false,
     error: false,
-    data: ["hello-world", "erc20", "erc721", "single_call", "vending_machine"],
+    data: ["hello-world", "single_call", "vending_machine"],
   },
   network: {
     loading: false,
