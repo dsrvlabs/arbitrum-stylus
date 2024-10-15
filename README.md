@@ -17,9 +17,19 @@ Wellcome to the Arbitrum stylus remix plugin repository.
 
 This tool is the best solution for deploying smart contracts written in languages like Rust through Arbitrum Stylus in Remix IDE. As long as you write your smart contract in a language that can be compiled to WASM here, you will be able to compile, deploy, activate, and even directly execute the contract through Stylus.
 
+
 <details> 
 <summary>Table of Contents</summary>
 
+- [Arbitrum Stylus Remix Plugin by Welldone Studio](#arbitrum-stylus-remix-plugin-by-welldone-studio)
+  - [Installation and Setup](#installation-and-setup)
+    - Installation
+    - Usage
+  - [Usage](#usage)
+    - [Running the Plugin](#running-the-plugin)
+    - [Writing a Smart Contract](#writing-a-smart-contract)
+    - [Deploying and Activating the Smart Contract](#deploying-and-activating-the-smart-contract)
+    - [Interacting with the Smart Contract](#interacting-with-the-smart-contract)
 </details>
 
 ### Installation and Setup
@@ -28,7 +38,7 @@ This tool is the best solution for deploying smart contracts written in language
 
 2. Usage: Once you access the plugin, your wallet will automatically connect. After that, users can either write their own contracts or load examples of pre-written contracts through the templates provided. For more detailed information, please refer to the usage section below.
 
-### Usage
+### Usages
 
 <div>
   <img src="public/docs/account.png" height="512" />
