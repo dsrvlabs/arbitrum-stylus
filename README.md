@@ -34,7 +34,7 @@ This tool is the best solution for deploying smart contracts written in language
 
 ### Installation and Setup
 
-1. Installation: You don't need to install anything. If you want to use our plugin, simply go to the plugin manager in Remix IDE and search for "Arbitrum Stylus." If you prefer to use it without searching, you can click [this direct link](https://remix.ethereum.org/#activate=arbitrum-stylus) for a faster and easier experience.
+1. Installation: You don't need to install anything. If you want to use our plugin, simply go to the plugin manager in [Remix IDE](https://remix.ethereum.org/) and search for "Arbitrum Stylus." If you prefer to use it without searching, you can click [this direct link](https://remix.ethereum.org/#activate=arbitrum-stylus) for a faster and easier experience.
 
 2. Usage: Once you access the plugin, your wallet will automatically connect. After that, users can either write their own contracts or load examples of pre-written contracts through the templates provided. For more detailed information, please refer to the usage section below.
 
@@ -51,11 +51,27 @@ This tool is the best solution for deploying smart contracts written in language
 
 #### Writing a Smart Contract
 1. Create a new project under the arbitrum/ directory, or use the "Create Template" option to automatically generate a Rust-based project.
-2. Write your smart contract in a language supported by Arbitrum Stylus (any language that can be compiled to WASM).
-3. Before deployment, ensure that the network selected on the left panel is the one you intend to deploy to.
-4. Once the smart contract code is complete, select the contract you wish to deploy from the target template and click the Compile button. After compilation, the bytecode for deployment will be generated as a deployment_tx_data.txt file in the output folder of the respective directory.
+2. **Create Template**: Create a simple example contract code written in Rust. You can create a sample contract by selecting the template option and clicking the `Create` button. More templates may be found at [Stylus Samples](https://github.com/OffchainLabs/stylus-workshop-rust-solidity).
+3. **New Project**: Automatically generate a contract structure. Click the `Create` button to create a contract structure.
+4. **Create Manually**: You can create your own contract projects without using the features above. However, for the remix plugin to build and deploy the contract, it must be built within the directory `arbitrum/`. If you start a new project, the structure should look like the following.
+```
+arbitrum
+└── <YOUR_PROJECT_NAME>
+    ├── Cargo.toml
+    └── src
+        └── contract.rs
+    └── examples
+        └── schema.rs
+```
+5. Write your smart contract in a language supported by Arbitrum Stylus
+6. Once the smart contract code is complete, select the contract you wish to deploy from the target template and click the Compile button. After compilation, the bytecode for deployment will be generated as a deployment_tx_data.txt file in the output folder of the respective directory.
 
 <img src="public/docs/execute.png" height="512" />
+
+#### Compile the Contract
+1. Select the project you want to compile in the **TARGET PROJECT** section.
+2. Select a compilation option and click the `Compile` button.
+3. When the compilation is complete, a tx_data and abi files are returned.
 
 #### Deploying and Activating the Smart Contract
 1. Once the contract is successfully compiled, a Deploy button will appear below the Compile button. Click the Deploy button to deploy your contract.
