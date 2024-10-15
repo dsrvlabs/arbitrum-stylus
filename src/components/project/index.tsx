@@ -6,7 +6,6 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "../../zustand";
-import wrapPromise from "../../utils/wrap-promise";
 import { log } from "../../utils/logger";
 import { sendCustomEvent } from "../../utils/send-custom-event";
 import { CustomTooltip } from "../common/custom-tooltip";
@@ -192,15 +191,13 @@ const NewProject = () => {
     }
   };
 
-  const wrappedIsExists = (dir: string) => wrapPromise(isExists(dir), client);
-
   const createProject = async () => {
     if (!client || !name) return;
     sendCustomEvent("new_project", {
       event_category: "arbitrum",
       method: "new_project",
     });
-    if (await wrappedIsExists(name)) {
+    if (await isExists(name)) {
       await client.terminal.log({
         type: "error",
         value: 'The folder "arbitrum/' + name + '" already exists',
@@ -221,8 +218,6 @@ const NewProject = () => {
     }
   };
 
-  const wrappedCreateProject = () => wrapPromise(createProject(), client);
-
   const handleNameOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -241,13 +236,7 @@ const NewProject = () => {
             if (event.key === "Enter") event.preventDefault();
           }}
         />
-        <Button
-          className="relative border-0"
-          variant="success"
-          size="sm"
-          disabled={isLoading}
-          onClick={wrappedCreateProject}
-        >
+        <Button className="relative border-0" variant="success" size="sm" disabled={isLoading} onClick={createProject}>
           <small>Create</small>
           <LoaderWrapper loading={isLoading} />
         </Button>
@@ -330,8 +319,6 @@ const Template = () => {
     }
   };
 
-  const wrappedCreateTemplate = () => wrapPromise(createTemplate(), client);
-
   const handleTemplateOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTemplate(event.target.value);
   };
@@ -356,13 +343,7 @@ const Template = () => {
               );
             })}
         </Form.Control>
-        <Button
-          className="relative border-0"
-          variant="success"
-          size="sm"
-          disabled={isLoading}
-          onClick={wrappedCreateTemplate}
-        >
+        <Button className="relative border-0" variant="success" size="sm" disabled={isLoading} onClick={createTemplate}>
           <small>Create</small>
           <LoaderWrapper loading={isLoading} />
         </Button>

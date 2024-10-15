@@ -1,5 +1,4 @@
 import { Annotation, HighlightPosition } from "@remixproject/plugin-api";
-import { PROD, STAGE } from "../const/stage";
 import { log } from "../utils/logger";
 
 export interface PositionDetails {
@@ -55,9 +54,7 @@ export const getPositionDetails = (msg: string): PositionDetails => {
   };
 };
 
-export const isRealError = (pos: Annotation) => {
-  return pos.row !== -1 && pos.column !== -1;
-};
+export const isRealError = (pos: Annotation) => pos.row !== -1 && pos.column !== -1;
 
 export const readFile = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -76,13 +73,8 @@ export const readFile = (file: File): Promise<string> => {
   });
 };
 
-export const stringify = (data: any) => {
-  return JSON.stringify(data, null, 2);
-};
+export const stringify = (data: any) => JSON.stringify(data, null, 2);
+
 export const shortenHexString = (address: string, first: number, last: number) => {
   return address === "" ? "" : `${address.slice(0, first)}...${address.slice(-last)}`;
 };
-
-export const enableAptosProve = () => STAGE !== PROD;
-export const enableJuno = () => STAGE !== PROD;
-export const enableSui = () => STAGE !== PROD;
