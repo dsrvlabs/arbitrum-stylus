@@ -21,7 +21,6 @@ export const App: React.FunctionComponent = () => {
     };
     if (!connection) init();
     log.debug(`%cẅël̈l̈c̈öm̈ë-̈ẗö-̈ẅël̈l̈d̈ön̈ë-̈c̈öd̈ë!̈`, "color:yellow");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
