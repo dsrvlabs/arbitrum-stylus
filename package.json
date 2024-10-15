@@ -41,7 +41,7 @@
   },
   "scripts": {
     "start": "export PORT=3001 && CHOKIDAR_USEPOLLING=true react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
     "postbuild": "rimraf build/**/*.map",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
