@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Arbitrum Stylus Remix Plugin by Welldone Studio</h1>
+  <h1>Arbitrum Stylus Remix Plugin by WELLDONE Studio</h1>
 </div>
 
 <!-- markdownlint-disable -->
@@ -21,7 +21,7 @@ This tool is the best solution for deploying smart contracts written in language
 <details> 
 <summary>Table of Contents</summary>
 
-- [Arbitrum Stylus Remix Plugin by Welldone Studio](#arbitrum-stylus-remix-plugin-by-welldone-studio)
+- [Arbitrum Stylus Remix Plugin by WELLDONE Studio](#arbitrum-stylus-remix-plugin-by-welldone-studio)
   - [Installation and Setup](#installation-and-setup)
     - Installation
     - Usage
