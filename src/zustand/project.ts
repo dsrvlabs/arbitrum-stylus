@@ -31,6 +31,16 @@ const initial = {
     error: false,
     data: ARBITRUM_NETWORK,
   },
+  compilerVersion: {
+    loading: false,
+    error: false,
+    data: "v0.5.3",
+  },
+  compilerVersions: {
+    loading: false,
+    error: false,
+    data: ["v0.5.1", "v0.5.3"],
+  },
   projects: {
     loading: false,
     error: false,
@@ -73,6 +83,12 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
       set(
         produce((state: ProjectState) => {
           state.project.project.data = project;
+        })
+      ),
+    setCompilerVersion: (compilerVersion: string) =>
+      set(
+        produce((state: ProjectState) => {
+          state.project.compilerVersion.data = compilerVersion;
         })
       ),
     fetchProjects: async () => {

@@ -11,6 +11,8 @@ export interface ProjectState {
     projects: DataType<string[]>;
     networks: NonNullableDataType<typeof ARBITRUM_NETWORK>;
     network: NonNullableDataType<typeof ARBITRUM_ONE>;
+    compilerVersion: NonNullableDataType<string>;
+    compilerVersions: NonNullableDataType<string[]>;
     upload: NonNullableDataType<boolean>;
     setErrorMsg: (msg: string | null) => void;
     setName: (name: string) => void;
@@ -19,6 +21,7 @@ export interface ProjectState {
     fetchProjects: () => Promise<void>;
     setProject: (project: string) => void;
     setNetwork: (network: typeof ARBITRUM_ONE) => void;
+    setCompilerVersion: (compilerVersion: string) => void;
     setUpload: (upload: boolean) => void;
     reset: () => void;
   };

@@ -25,6 +25,7 @@ export const Project = ({}: ProjectProps) => {
     <div className="flex flex-col gap-3">
       <Form className="flex flex-col gap-2">
         <Network />
+        <CompilerVersion />
         <Account />
         <Balance />
         <NewProject />
@@ -138,6 +139,43 @@ const Network = () => {
             {item.chainName}
           </option>
         ))}
+      </Form.Control>
+    </Form.Group>
+  );
+};
+
+const CompilerVersion = () => {
+  const { compilerVersion, setCompilerVersion, compilerVersions } = useStore(
+    useShallow((state) => ({
+      client: state.global.client,
+      compilerVersion: state.project.compilerVersion.data,
+      setCompilerVersion: state.project.setCompilerVersion,
+      compilerVersions: state.project.compilerVersions.data,
+    }))
+  );
+
+  const handleCompilerVersionOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCompilerVersion(event.target.value);
+  };
+
+  return (
+    <Form.Group>
+      <Form.Label>Compiler Version</Form.Label>
+      <Form.Control
+        as="select"
+        className="disabled:!text-gray-400 disabled:cursor-not-allowed"
+        value={compilerVersion}
+        size="sm"
+        onChange={handleCompilerVersionOnChange}
+      >
+        {compilerVersions &&
+          compilerVersions.map((item, index) => {
+            return (
+              <option value={item} key={index}>
+                {item}
+              </option>
+            );
+          })}
       </Form.Control>
     </Form.Group>
   );
