@@ -26,7 +26,7 @@ import { log } from "../../utils/logger";
 import { isEmptyList } from "../../utils/list-utils";
 import { EditorClient } from "../../utils/editor";
 import { CHAIN_NAME } from "../../const/chain";
-import { ARBITRUM_COMPILER_CONSUMER_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
+import { COMPILER_WEBSOCKET_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { cleanupSocketArbitrum } from "../../utils/socket";
 import { getPositionDetails, isRealError, stringify } from "../../const/helper";
 import { S3Path } from "../../const/s3-path";
@@ -49,6 +49,7 @@ export const Compile = ({}: CompileProps) => {
     setTimestamp,
     setFileName,
     setCompileErrorMsg,
+    compilerVersion,
     project,
     upload,
     deployLoading,
@@ -73,6 +74,7 @@ export const Compile = ({}: CompileProps) => {
       setTimestamp: state.compile.setTimestamp,
       setFileName: state.compile.setFileName,
       setCompileErrorMsg: state.compile.setErrorMsg,
+      compilerVersion: state.project.compilerVersion.data,
       project: state.project.project,
       upload: state.project.upload,
       setDeployTransactionData: state.deploy.setTransactionData,
@@ -237,7 +239,7 @@ export const Compile = ({}: CompileProps) => {
       return;
     }
 
-    const socket = io(ARBITRUM_COMPILER_CONSUMER_ENDPOINT, {
+    const socket = io(COMPILER_WEBSOCKET_ENDPOINT, {
       reconnection: false,
       transports: ["websocket"],
       timeout: 120_000,
@@ -353,7 +355,8 @@ export const Compile = ({}: CompileProps) => {
           method: "GET",
           url: `${COMPILER_API_ENDPOINT}/s3Proxy`,
           params: {
-            bucket: S3Path.bucket(),
+            // bucket: S3Path.bucket(),
+            bucket: "wds-code-build",
             fileKey: S3Path.outKey(CHAIN_NAME.arbitrum, network, account, timestamp, BUILD_FILE_TYPE.rs),
           },
           responseType: "arraybuffer",
@@ -430,13 +433,15 @@ export const Compile = ({}: CompileProps) => {
         }
       });
 
-      const remixArbitrumCompileRequestedV1: RemixArbitrumCompileRequestedV1 = {
+      // FIXME:
+      const remixArbitrumCompileRequestedV1: RemixArbitrumCompileRequestedV1 & { cliVersion: string } = {
         compileId: compileIdV2(CHAIN_NAME.arbitrum, network, account, timestamp),
         chainName: CHAIN_NAME.arbitrum,
         chainId: network,
         address: account,
         timestamp: timestamp.toString() || "0",
         fileType: "arbitrum",
+        cliVersion: compilerVersion,
       };
 
       socket.emit(REMIX_ARBITRUM_COMPILE_REQUESTED_V1, remixArbitrumCompileRequestedV1);

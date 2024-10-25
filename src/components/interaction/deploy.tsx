@@ -7,6 +7,7 @@ import { LoaderWrapper } from "../common/loader";
 import { useStore } from "../../zustand";
 import { COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { log } from "../../utils/logger";
+import { ARBITRUM_NETWORK } from "../../const/network";
 
 interface ArbitrumContractCreateDto {
   chainId: string;
@@ -20,6 +21,13 @@ interface ArbitrumContractCreateDto {
   cliVersion: string | null;
 }
 
+interface ArbitrumVerifyContractDto {
+  network: string;
+  contractAddress: string;
+  cliVersion: string;
+  srcFileId?: string;
+}
+
 interface DeployProps {}
 export const Deploy = ({}: DeployProps) => {
   const {
@@ -29,6 +37,7 @@ export const Deploy = ({}: DeployProps) => {
     account,
     project,
     upload,
+    compilerVersion,
     compileLoading,
     timestamp,
     transactionData,
@@ -51,6 +60,7 @@ export const Deploy = ({}: DeployProps) => {
       account: state.account.address.data,
       project: state.project.project.data,
       upload: state.project.upload.data,
+      compilerVersion: state.project.compilerVersion.data,
       compileLoading: state.compile.loading,
       timestamp: state.compile.timestamp,
       transactionData: state.deploy.transactionData.data,
@@ -150,7 +160,7 @@ export const Deploy = ({}: DeployProps) => {
         txHash: hash,
         isSrcUploaded: upload,
         status: txReceipt.status ? "true" : "false",
-        cliVersion: null, // todo
+        cliVersion: compilerVersion,
       };
       log.info("arbitrumContractCreateDto", arbitrumContractCreateDto);
       try {
@@ -164,6 +174,13 @@ export const Deploy = ({}: DeployProps) => {
       if (activated || !activatedReady) {
         setContractAddresses([...contractAddresses, txReceipt.contractAddress]);
       }
+
+      verifyContract({
+        network,
+        contractAddress: txReceipt.contractAddress,
+        srcFileId: String(timestamp),
+        cliVersion: compilerVersion,
+      });
     }
     client.terminal.log({
       type: "info",
@@ -174,6 +191,23 @@ export const Deploy = ({}: DeployProps) => {
       value: JSON.stringify(txReceipt, (key, value) => (typeof value === "bigint" ? value.toString() : value), 2),
     });
     setLoading(false);
+  };
+
+  const verifyContract = async ({ network, contractAddress, srcFileId, cliVersion }: ArbitrumVerifyContractDto) => {
+    const targetNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === network);
+    if (!targetNetwork) return;
+    log.info("verifyContract", { network: targetNetwork.network, contractAddress, srcFileId, cliVersion });
+    try {
+      const res = await axios.post(COMPILER_API_ENDPOINT + "/arbitrum/verifications", {
+        network: targetNetwork.network,
+        contractAddress,
+        srcFileId,
+        cliVersion,
+      });
+      console.log("verifyContract", res);
+    } catch (error) {
+      log.error("verifyContract error", error);
+    }
   };
 
   const getReceiptRecursively = async (

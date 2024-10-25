@@ -1,23 +1,18 @@
 import { STAGE } from "./stage";
 
 const COMPILER_API_ENDPOINT_POOL = {
-  local: "http://localhost:8000",
+  // local: "http://localhost:8000",
+  // local: "https://cargo-test.veriwell.dev",
+  local: "https://arbitrum.compiler.welldonestudio.io",
   dev: "https://dev.compiler.welldonestudio.io",
   prod: "https://verify.welldonestudio.io",
 };
 export const COMPILER_API_ENDPOINT = COMPILER_API_ENDPOINT_POOL[STAGE];
 
-const ARBITRUM_COMPILER_CONSUMER_ENDPOINT_POOL = {
-  local: "ws://localhost:8000",
+const COMPILER_WEBSOCKET_ENDPOINT_POOL = {
+  // local: "ws://localhost:8000",
+  local: "wss://arbitrum.compiler.welldonestudio.io",
   dev: "wss://dev.compiler.welldonestudio.io",
   prod: "wss://prod.near.compiler.welldonestudio.io",
 };
-export const ARBITRUM_COMPILER_CONSUMER_ENDPOINT = ARBITRUM_COMPILER_CONSUMER_ENDPOINT_POOL[STAGE];
-
-const ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT_POOL = {
-  local: "http://localhost:8000",
-  dev: "https://dev.compiler.welldonestudio.io",
-  prod: "https://verify.welldonestudio.io",
-};
-
-export const ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT = ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT_POOL[STAGE];
+export const COMPILER_WEBSOCKET_ENDPOINT = COMPILER_WEBSOCKET_ENDPOINT_POOL[STAGE];

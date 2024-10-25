@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 
 import { LoaderWrapper } from "../common/loader";
 import { useStore } from "../../zustand";
-import { ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT, COMPILER_API_ENDPOINT } from "../../const/endpoint";
+import { COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { log } from "../../utils/logger";
 
 const ACTIVATION_TO_ADDR = "0x0000000000000000000000000000000000000071";
@@ -68,9 +68,7 @@ export const Activate = ({}: ActivateProps) => {
 
     let tx = "";
     try {
-      const res = await axios.get(
-        ARBITRUM_COMPILER_CONSUMER_API_ENDPOINT + `/arbitrum/activation-tx?contractAddr=${address}`
-      );
+      const res = await axios.get(COMPILER_API_ENDPOINT + `/arbitrum/activation-tx?contractAddr=${address}`);
       tx = res.data?.tx;
       if (!tx) {
         await client.terminal.log({
