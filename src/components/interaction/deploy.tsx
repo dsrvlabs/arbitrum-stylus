@@ -35,9 +35,11 @@ export const Deploy = ({}: DeployProps) => {
     provider,
     network,
     account,
+    fetchBalance,
     project,
     upload,
     compilerVersion,
+    os,
     compileLoading,
     timestamp,
     transactionData,
@@ -58,9 +60,11 @@ export const Deploy = ({}: DeployProps) => {
       provider: state.account.provider.data,
       network: state.account.network.data,
       account: state.account.address.data,
+      fetchBalance: state.account.fetchBalance,
       project: state.project.project.data,
       upload: state.project.upload.data,
       compilerVersion: state.project.compilerVersion.data,
+      os: state.project.os.data,
       compileLoading: state.compile.loading,
       timestamp: state.compile.timestamp,
       transactionData: state.deploy.transactionData.data,
@@ -164,7 +168,7 @@ export const Deploy = ({}: DeployProps) => {
       };
       log.info("arbitrumContractCreateDto", arbitrumContractCreateDto);
       try {
-        const res = await axios.post(COMPILER_API_ENDPOINT + "/arbitrum/contracts", arbitrumContractCreateDto);
+        const res = await axios.post(COMPILER_API_ENDPOINT(os) + "/arbitrum/contracts", arbitrumContractCreateDto);
         log.info(`put arbitrum/contracts api res`, res);
       } catch (e) {
         log.error(`put arbitrum/contracts api error`);
@@ -190,6 +194,7 @@ export const Deploy = ({}: DeployProps) => {
       type: "info",
       value: JSON.stringify(txReceipt, (key, value) => (typeof value === "bigint" ? value.toString() : value), 2),
     });
+    await fetchBalance();
     setLoading(false);
   };
 
@@ -198,7 +203,7 @@ export const Deploy = ({}: DeployProps) => {
     if (!targetNetwork) return;
     log.info("verifyContract", { network: targetNetwork.network, contractAddress, srcFileId, cliVersion });
     try {
-      const res = await axios.post(COMPILER_API_ENDPOINT + "/arbitrum/verifications", {
+      const res = await axios.post(COMPILER_API_ENDPOINT(os) + "/arbitrum/verifications", {
         network: targetNetwork.network,
         contractAddress,
         srcFileId,

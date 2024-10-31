@@ -41,6 +41,16 @@ const initial = {
     error: false,
     data: ["0.5.1", "0.5.3"],
   },
+  os: {
+    loading: false,
+    error: false,
+    data: "linux",
+  },
+  oses: {
+    loading: false,
+    error: false,
+    data: ["linux", "darwin"],
+  },
   projects: {
     loading: false,
     error: false,
@@ -89,6 +99,12 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
       set(
         produce((state: ProjectState) => {
           state.project.compilerVersion.data = compilerVersion;
+        })
+      ),
+    setOs: (os: string) =>
+      set(
+        produce((state: ProjectState) => {
+          state.project.os.data = os;
         })
       ),
     fetchProjects: async () => {

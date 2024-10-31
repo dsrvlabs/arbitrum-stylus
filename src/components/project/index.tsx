@@ -25,6 +25,7 @@ export const Project = ({}: ProjectProps) => {
     <div className="flex flex-col gap-3">
       <Form className="flex flex-col gap-2">
         <Network />
+        <Os />
         <CompilerVersion />
         <Account />
         <Balance />
@@ -144,10 +145,51 @@ const Network = () => {
   );
 };
 
+const Os = () => {
+  const { os, oses, setOs, resetCompile, resetDeploy, resetActivate } = useStore(
+    useShallow((state) => ({
+      os: state.project.os.data,
+      oses: state.project.oses.data,
+      setOs: state.project.setOs,
+      resetCompile: state.compile.reset,
+      resetDeploy: state.deploy.reset,
+      resetActivate: state.activate.reset,
+    }))
+  );
+
+  const handleOsOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    resetCompile();
+    resetDeploy();
+    resetActivate();
+    setOs(event.target.value);
+  };
+
+  return (
+    <Form.Group>
+      <Form.Label>Operating System</Form.Label>
+      <Form.Control
+        as="select"
+        className="disabled:!text-gray-400 disabled:cursor-not-allowed"
+        value={os}
+        size="sm"
+        onChange={handleOsOnChange}
+      >
+        {oses &&
+          oses.map((item, index) => {
+            return (
+              <option value={item} key={index}>
+                {item}
+              </option>
+            );
+          })}
+      </Form.Control>
+    </Form.Group>
+  );
+};
+
 const CompilerVersion = () => {
   const { compilerVersion, setCompilerVersion, compilerVersions } = useStore(
     useShallow((state) => ({
-      client: state.global.client,
       compilerVersion: state.project.compilerVersion.data,
       setCompilerVersion: state.project.setCompilerVersion,
       compilerVersions: state.project.compilerVersions.data,

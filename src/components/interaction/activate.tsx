@@ -24,6 +24,7 @@ export const Activate = ({}: ActivateProps) => {
     provider,
     network,
     account,
+    os,
     compileLoading,
     deployLoading,
     setLoading,
@@ -41,6 +42,7 @@ export const Activate = ({}: ActivateProps) => {
       provider: state.account.provider.data,
       network: state.account.network.data,
       account: state.account.address.data,
+      os: state.project.os.data,
       compileLoading: state.compile.loading,
       deployLoading: state.deploy.loading,
       activateLoading: state.activate.loading,
@@ -68,7 +70,7 @@ export const Activate = ({}: ActivateProps) => {
 
     let tx = "";
     try {
-      const res = await axios.get(COMPILER_API_ENDPOINT + `/arbitrum/activation-tx?contractAddr=${address}`);
+      const res = await axios.get(COMPILER_API_ENDPOINT(os) + `/arbitrum/activation-tx?contractAddr=${address}`);
       tx = res.data?.tx;
       if (!tx) {
         await client.terminal.log({

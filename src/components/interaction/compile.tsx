@@ -50,6 +50,7 @@ export const Compile = ({}: CompileProps) => {
     setFileName,
     setCompileErrorMsg,
     compilerVersion,
+    os,
     project,
     upload,
     deployLoading,
@@ -75,6 +76,7 @@ export const Compile = ({}: CompileProps) => {
       setFileName: state.compile.setFileName,
       setCompileErrorMsg: state.compile.setErrorMsg,
       compilerVersion: state.project.compilerVersion.data,
+      os: state.project.os.data,
       project: state.project.project,
       upload: state.project.upload,
       setDeployTransactionData: state.deploy.setTransactionData,
@@ -196,6 +198,7 @@ export const Compile = ({}: CompileProps) => {
         timestamp: timestamp.toString() || "0",
         fileType: "arbitrum",
         zipFile: blob,
+        os,
       });
       if (!isSrcZipUploadSuccess) {
         setLoading(false);
@@ -231,6 +234,7 @@ export const Compile = ({}: CompileProps) => {
       account: account,
       timestamp: timestamp.toString() || "0",
       projFiles: projFiles_,
+      os,
     });
 
     if (uploadUrls.length === 0) {
@@ -239,7 +243,8 @@ export const Compile = ({}: CompileProps) => {
       return;
     }
 
-    const socket = io(COMPILER_WEBSOCKET_ENDPOINT, {
+    console.log("COMPILER_WEBSOCKET_ENDPOINT(os)", COMPILER_WEBSOCKET_ENDPOINT(os));
+    const socket = io(COMPILER_WEBSOCKET_ENDPOINT(os), {
       reconnection: false,
       transports: ["websocket"],
       timeout: 120_000,
@@ -279,7 +284,7 @@ export const Compile = ({}: CompileProps) => {
           try {
             await axios.request({
               method: "DELETE",
-              url: `${COMPILER_API_ENDPOINT}/s3Proxy`,
+              url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
               params: {
                 chainName: CHAIN_NAME.arbitrum,
                 chainId: network,
@@ -353,7 +358,7 @@ export const Compile = ({}: CompileProps) => {
 
         const res = await axios.request({
           method: "GET",
-          url: `${COMPILER_API_ENDPOINT}/s3Proxy`,
+          url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
           params: {
             // bucket: S3Path.bucket(),
             bucket: "wds-code-build",
@@ -367,7 +372,7 @@ export const Compile = ({}: CompileProps) => {
           try {
             await axios.request({
               method: "DELETE",
-              url: `${COMPILER_API_ENDPOINT}/s3Proxy`,
+              url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
               params: {
                 chainName: CHAIN_NAME.arbitrum,
                 chainId: network,

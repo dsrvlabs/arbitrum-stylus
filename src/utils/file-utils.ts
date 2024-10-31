@@ -83,6 +83,7 @@ export class FileUtil {
     timestamp: string;
     fileType: string;
     zipFile: Blob;
+    os: string;
   }) {
     const formData = new FormData();
     formData.append("chainName", srcZipUploadReq.chainName);
@@ -91,7 +92,7 @@ export class FileUtil {
     formData.append("timestamp", srcZipUploadReq.timestamp);
     formData.append("fileType", srcZipUploadReq.fileType);
     formData.append("zipFile", srcZipUploadReq.zipFile);
-    const res = await axios.post(COMPILER_API_ENDPOINT + "/s3Proxy/src-v2", formData, {
+    const res = await axios.post(COMPILER_API_ENDPOINT(srcZipUploadReq.os) + "/s3Proxy/src-v2", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json",
@@ -107,8 +108,9 @@ export class FileUtil {
     account: string;
     timestamp: string;
     projFiles: FileInfo[];
+    os: string;
   }): Promise<UploadUrlDto[]> {
-    const uploadUrlsRes = await axios.post(COMPILER_API_ENDPOINT + "/s3Proxy/upload-urls", {
+    const uploadUrlsRes = await axios.post(COMPILER_API_ENDPOINT(srcZipUploadReq.os) + "/s3Proxy/upload-urls", {
       chainName: srcZipUploadReq.chainName,
       chainId: srcZipUploadReq.chainId,
       account: srcZipUploadReq.account || "noaddress",
