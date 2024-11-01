@@ -6,6 +6,7 @@ import { createCompileStore } from "./compile";
 import { createDeployStore } from "./deploy";
 import { createActivateStore } from "./activate";
 import { createContractStore } from "./contract";
+import { createVerifyStore } from "./verify";
 import type { GlobalState } from "./global.types";
 import type { AccountState } from "./account.types";
 import type { ProjectState } from "./project.types";
@@ -13,9 +14,10 @@ import type { CompileState } from "./compile.types";
 import type { DeployState } from "./deploy.types";
 import type { ActivateState } from "./activate.types";
 import type { ContractState } from "./contract.types";
+import type { VerifyState } from "./verify.types";
 
 export const useStore = create<
-  GlobalState & AccountState & ProjectState & CompileState & DeployState & ActivateState & ContractState
+  GlobalState & AccountState & ProjectState & CompileState & DeployState & ActivateState & ContractState & VerifyState
 >()((...a) => ({
   ...createGlobalStore(...a),
   ...createAccountStore(...a),
@@ -24,4 +26,5 @@ export const useStore = create<
   ...createDeployStore(...a),
   ...createActivateStore(...a),
   ...createContractStore(...a),
+  ...createVerifyStore(...a),
 }));

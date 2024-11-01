@@ -1,7 +1,7 @@
 import web3 from "web3";
 import { produce } from "immer";
-
 import type { StateCreator } from "zustand";
+
 import type { AccountState, RpcError } from "./account.types";
 
 const initial = {
