@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { OverlayDelay, OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 
@@ -29,6 +29,7 @@ export type CustomTooltipType = {
   tooltipText: string | JSX.Element;
   tooltipTextClasses?: string;
   delay?: OverlayDelay;
+  hoverable?: boolean;
 };
 
 export const CustomTooltip = ({
@@ -39,7 +40,13 @@ export const CustomTooltip = ({
   tooltipText,
   tooltipTextClasses,
   delay,
+  hoverable = false,
 }: CustomTooltipType) => {
+  const [show, setShow] = useState(false);
+
+  const handleMouseEnter = () => setShow(true);
+  const handleMouseLeave = () => setShow(false);
+
   if (typeof tooltipText !== "string") {
     tooltipText = React.cloneElement(tooltipText, {
       className: " bg-secondary text-wrap p-1 px-2 ",
@@ -49,13 +56,18 @@ export const CustomTooltip = ({
   return (
     <Fragment>
       <OverlayTrigger
+        show={show}
         placement={placement}
+        trigger={hoverable ? ["hover", "focus"] : ["click", "focus"]}
         overlay={
-          <Popover id={`popover-positioned-${placement}`}>
+          <Popover
+            id={`popover-positioned-${placement}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <Popover.Body
               id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
-              style={{ minWidth: "fit-content" }}
-              className={"text-wrap p-1 px-2 bg-secondary w-100" + tooltipClasses}
+              className={"text-wrap p-0 bg-secondary" + tooltipClasses}
             >
               {typeof tooltipText === "string" ? (
                 <span className={"text-wrap p-1 px-2 bg-secondary " + { tooltipTextClasses }}>{tooltipText}</span>
@@ -66,6 +78,7 @@ export const CustomTooltip = ({
           </Popover>
         }
         delay={delay}
+        onToggle={(nextShow) => setShow(nextShow)} // toggle 이벤트 핸들링
       >
         {children}
       </OverlayTrigger>
