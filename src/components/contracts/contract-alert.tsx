@@ -11,7 +11,7 @@ export const ContractAlert = ({}: ContractAlertProps) => {
     }))
   );
   return (
-    <Alert variant="warning" className="text-center" hidden={contractAddress?.length === 0}>
+    <Alert variant="warning" className="text-center" hidden={contractAddress?.length !== 0}>
       <small>Currently you have no contract instances to interact with.</small>
     </Alert>
   );

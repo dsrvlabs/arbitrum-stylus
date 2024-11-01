@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import axios from "axios";
 import JSZip from "jszip";
-import { FaSyncAlt } from "react-icons/fa";
+import { FaSyncAlt, FaSpinner, FaCheck } from "react-icons/fa";
+import { FaExclamation } from "react-icons/fa6";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
 
@@ -12,6 +13,7 @@ import { CustomTooltip } from "../common/custom-tooltip";
 import { LoaderWrapper } from "../common/loader";
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../../const/network";
 import { isRPCError } from "../connect-metamask";
+import { shortenAddress } from "../../utils/transaction";
 
 interface ProjectProps {}
 export const Project = ({}: ProjectProps) => {
@@ -505,31 +507,88 @@ const TargetProject = () => {
 };
 
 const UploadCode = () => {
-  const { upload, setUpload } = useStore(
-    useShallow((state) => ({ upload: state.project.upload.data, setUpload: state.project.setUpload }))
+  const { upload, setUpload, address, loading, verified } = useStore(
+    useShallow((state) => ({
+      upload: state.project.upload.data,
+      setUpload: state.project.setUpload,
+      address: state.verify.address,
+      loading: state.verify.loading,
+      verified: state.verify.verified,
+    }))
   );
 
   const handleUploadOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUpload(event.target.checked);
   };
 
-  return (
-    <div className="form-check">
+  const Icon = ({ verified }: { verified: boolean | null }) =>
+    verified === null ? (
       <input
+        className="size-4"
         type="checkbox"
-        className="form-check-input"
         id="uploadCodeCheckbox"
         checked={upload}
         onChange={handleUploadOnChange}
       />
+    ) : verified ? (
+      <FaCheck className="text-success" />
+    ) : (
+      <FaExclamation className="text-warning" />
+    );
+
+  const Text = ({ verified }: { verified: boolean | null }) =>
+    verified === null ? (
+      <p>Contract Verification</p>
+    ) : verified ? (
+      <p>
+        {address
+          ? `[ ${shortenAddress({
+              address,
+            })} ]`
+          : ""}{" "}
+        Verified. <br />
+        For details, please visit{" "}
+        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+          VeriWell
+        </a>
+      </p>
+    ) : (
+      <p>
+        {address
+          ? `[ ${shortenAddress({
+              address,
+            })} ]`
+          : ""}{" "}
+        Verification failed. <br />
+        Please try manually on{" "}
+        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+          VeriWell
+        </a>
+      </p>
+    );
+
+  return (
+    <div className={`my-2 relative flex items-center gap-2`}>
+      {loading ? <FaSpinner className="animate-spin" /> : <Icon verified={verified} />}
+
+      <label className="form-check-label" htmlFor="uploadCodeCheckbox" style={{ verticalAlign: "top" }}>
+        <p>{loading ? "Contract Verifying..." : <Text verified={verified} />}</p>
+      </label>
       <CustomTooltip
         placement="top"
         tooltipId="overlay-ataddresss"
-        tooltipText="When you upload the code, a code verification feature will be provided in the future."
+        tooltipText={
+          <p className="py-1 px-2">
+            If you select this option before compilation, the code will be uploaded to{" "}
+            <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+              VeriWell
+            </a>{" "}
+            and automatically verified after the deployment step
+          </p>
+        }
+        hoverable
       >
-        <label className="form-check-label" htmlFor="uploadCodeCheckbox" style={{ verticalAlign: "top" }}>
-          Upload Code
-        </label>
+        <div className="text-[#A2A3BD] font-size-0.9em cursor-pointer">&#9432;</div>
       </CustomTooltip>
     </div>
   );

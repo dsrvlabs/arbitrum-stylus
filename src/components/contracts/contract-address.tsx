@@ -9,26 +9,35 @@ import { isEthAddress } from "../../utils/ethereum-chain";
 
 interface ContractAddressProps {}
 export const ContractAddress = ({}: ContractAddressProps) => {
-  const { client, contractAddresses, setContractAddresses, abi, setAbi, contractLoading } = useStore(
-    useShallow((state) => ({
-      client: state.global.client,
-      compileLoading: state.compile.loading,
-      deployLoading: state.deploy.loading,
-      activateLoading: state.activate.loading,
-      abi: state.contract.abi,
-      setAbi: state.contract.setAbi,
-      address: state.contract.address,
-      contractAddresses: state.contract.contractAddresses,
-      setContractAddresses: state.contract.setContractAddresses,
-      contractLoading: state.contract.loading,
-    }))
-  );
+  const { client, network, contractAddresses, setContractAddresses, fetchVerify, abi, setAbi, contractLoading } =
+    useStore(
+      useShallow((state) => ({
+        client: state.global.client,
+        network: state.account.network.data,
+        compileLoading: state.compile.loading,
+        deployLoading: state.deploy.loading,
+        activateLoading: state.activate.loading,
+        fetchVerify: state.verify.fetchVerify,
+        abi: state.contract.abi,
+        setAbi: state.contract.setAbi,
+        address: state.contract.address,
+        contractAddresses: state.contract.contractAddresses,
+        setContractAddresses: state.contract.setContractAddresses,
+        contractLoading: state.contract.loading,
+      }))
+    );
   const [contractAddress, setContractAddress] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMsg(null);
     setContractAddress(event.target.value);
+    if (isEthAddress(event.target.value) && network) {
+      fetchVerify({
+        contractAddress: event.target.value,
+        network,
+      });
+    }
   };
 
   const handleAtAddressOnClick = async () => {
@@ -98,9 +107,7 @@ export const ContractAddress = ({}: ContractAddressProps) => {
             </Tooltip>
           }
         >
-          <div className="flex items-center bg-transparent border-0 text-white ml-2 font-size-0.9em cursor-pointer">
-            &#9432;
-          </div>
+          <div className="flex items-center text-[#A2A3BD] ml-2 font-size-0.9em cursor-pointer">&#9432;</div>
         </OverlayTrigger>
       </InputGroup>
       {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}

@@ -12,6 +12,7 @@ import { ARBITRUM_NETWORK } from "../../const/network";
 import { CallResultAsString, RenderTransactionsAsString } from "../../utils/format-transaction";
 import { log } from "../../utils/logger";
 import { LoaderWrapper } from "../common/loader";
+import { shortenAddress } from "../../utils/transaction";
 
 const isFunctionFragment = (abi: AbiFragment): abi is AbiFunctionFragment => abi.type === "function";
 
@@ -49,9 +50,7 @@ export const AbiExecuter = ({}: AbiExecuterProps) => {
               <Card.Header className="px-2 py-1">
                 <strong className="align-middle">{targetAbi.name}</strong>
                 &nbsp;
-                <small className="align-middle">{`${targetAbi.address.substring(0, 6)}...${targetAbi.address.substring(
-                  targetAbi.address.length - 4
-                )}`}</small>
+                <small className="align-middle">{shortenAddress({ address: targetAbi.address })}</small>
                 <Button
                   className="float-right align-middle"
                   size="sm"

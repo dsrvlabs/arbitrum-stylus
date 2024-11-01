@@ -7,7 +7,6 @@ import { LoaderWrapper } from "../common/loader";
 import { useStore } from "../../zustand";
 import { COMPILER_API_ENDPOINT } from "../../const/endpoint";
 import { log } from "../../utils/logger";
-import { ARBITRUM_NETWORK } from "../../const/network";
 
 interface ArbitrumContractCreateDto {
   chainId: string;
@@ -19,13 +18,6 @@ interface ArbitrumContractCreateDto {
   isSrcUploaded: boolean;
   status: string;
   cliVersion: string | null;
-}
-
-interface ArbitrumVerifyContractDto {
-  network: string;
-  contractAddress: string;
-  cliVersion: string;
-  srcFileId?: string;
 }
 
 interface DeployProps {}
@@ -49,6 +41,7 @@ export const Deploy = ({}: DeployProps) => {
     activateLoading,
     activated,
     activatedReady,
+    requestVerify,
     setAbi,
     address,
     setAddress,
@@ -74,6 +67,7 @@ export const Deploy = ({}: DeployProps) => {
       activateLoading: state.activate.loading,
       activated: state.activate.activated,
       activatedReady: state.activate.ready,
+      requestVerify: state.verify.requestVerify,
       setAbi: state.contract.setAbi,
       address: state.contract.address,
       setAddress: state.contract.setAddress,
@@ -179,7 +173,7 @@ export const Deploy = ({}: DeployProps) => {
         setContractAddresses([...contractAddresses, txReceipt.contractAddress]);
       }
 
-      verifyContract({
+      requestVerify({
         network,
         contractAddress: txReceipt.contractAddress,
         srcFileId: String(timestamp),
@@ -196,23 +190,6 @@ export const Deploy = ({}: DeployProps) => {
     });
     await fetchBalance();
     setLoading(false);
-  };
-
-  const verifyContract = async ({ network, contractAddress, srcFileId, cliVersion }: ArbitrumVerifyContractDto) => {
-    const targetNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === network);
-    if (!targetNetwork) return;
-    log.info("verifyContract", { network: targetNetwork.network, contractAddress, srcFileId, cliVersion });
-    try {
-      const res = await axios.post(COMPILER_API_ENDPOINT(os) + "/arbitrum/verifications", {
-        network: targetNetwork.network,
-        contractAddress,
-        srcFileId,
-        cliVersion,
-      });
-      console.log("verifyContract", res);
-    } catch (error) {
-      log.error("verifyContract error", error);
-    }
   };
 
   const getReceiptRecursively = async (
