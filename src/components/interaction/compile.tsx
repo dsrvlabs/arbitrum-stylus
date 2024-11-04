@@ -286,6 +286,7 @@ export const Compile = ({}: CompileProps) => {
               method: "DELETE",
               url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
               params: {
+                bucket: S3Path.bucket(),
                 chainName: CHAIN_NAME.arbitrum,
                 chainId: network,
                 account: account,
@@ -360,8 +361,7 @@ export const Compile = ({}: CompileProps) => {
           method: "GET",
           url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
           params: {
-            // bucket: S3Path.bucket(),
-            bucket: "wds-code-build",
+            bucket: S3Path.bucket(),
             fileKey: S3Path.outKey(CHAIN_NAME.arbitrum, network, account, timestamp, BUILD_FILE_TYPE.rs),
           },
           responseType: "arraybuffer",
@@ -374,6 +374,7 @@ export const Compile = ({}: CompileProps) => {
               method: "DELETE",
               url: `${COMPILER_API_ENDPOINT(os)}/s3Proxy`,
               params: {
+                bucket: S3Path.bucket(),
                 chainName: CHAIN_NAME.arbitrum,
                 chainId: network,
                 account: account,

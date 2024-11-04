@@ -1,4 +1,5 @@
 import { STAGE } from "./stage";
+console.log("STAGE", STAGE);
 
 const COMPILER_API_ENDPOINT_POOL = {
   local: "http://localhost:8000",

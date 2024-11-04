@@ -39,7 +39,7 @@ const initial = {
   compilerVersions: {
     loading: false,
     error: false,
-    data: ["0.5.1", "0.5.3"],
+    data: ["0.5.1", "0.5.3", "0.5.4", "0.5.5"],
   },
   os: {
     loading: false,

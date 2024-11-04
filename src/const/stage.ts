@@ -4,8 +4,7 @@ export const LOCAL: Stage = "local";
 export const DEVELOP: Stage = "dev";
 export const PROD: Stage = "prod";
 
-// let stage = process.env.REACT_APP_STAGE;
-let stage = "prod";
+let stage = process.env.REACT_APP_STAGE;
 if (stage === PROD) {
   stage = PROD;
 } else if (stage === DEVELOP) {
