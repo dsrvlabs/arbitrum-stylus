@@ -62,6 +62,7 @@ export const Compile = ({}: CompileProps) => {
     resetActivate,
     setGasFee,
     setAddress,
+    resetVerify,
   } = useStore(
     useShallow((state) => ({
       client: state.global.client,
@@ -88,6 +89,7 @@ export const Compile = ({}: CompileProps) => {
       resetActivate: state.activate.reset,
       setGasFee: state.contract.setGasFee,
       setAddress: state.contract.setAddress,
+      resetVerify: state.verify.reset,
     }))
   );
   // const [fileName, setFileName] = useState<string>("");
@@ -103,6 +105,7 @@ export const Compile = ({}: CompileProps) => {
     resetCompile();
     resetDeploy();
     resetActivate();
+    resetVerify();
     setAddress(null);
 
     setLoading(true);
@@ -243,7 +246,6 @@ export const Compile = ({}: CompileProps) => {
       return;
     }
 
-    console.log("COMPILER_WEBSOCKET_ENDPOINT(os)", COMPILER_WEBSOCKET_ENDPOINT(os));
     const socket = io(COMPILER_WEBSOCKET_ENDPOINT(os), {
       reconnection: false,
       transports: ["websocket"],
