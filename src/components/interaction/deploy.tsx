@@ -173,12 +173,13 @@ export const Deploy = ({}: DeployProps) => {
         setContractAddresses([...contractAddresses, txReceipt.contractAddress]);
       }
 
-      requestVerify({
-        network,
-        contractAddress: txReceipt.contractAddress,
-        srcFileId: String(timestamp),
-        cliVersion: compilerVersion,
-      });
+      if (upload)
+        requestVerify({
+          network,
+          contractAddress: txReceipt.contractAddress,
+          srcFileId: String(timestamp),
+          cliVersion: compilerVersion,
+        });
     }
     client.terminal.log({
       type: "info",
