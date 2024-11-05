@@ -11,6 +11,7 @@ import { log } from "../../utils/logger";
 import { sendCustomEvent } from "../../utils/send-custom-event";
 import { CustomTooltip } from "../common/custom-tooltip";
 import { LoaderWrapper } from "../common/loader";
+import { LoaderBouncingDot } from "../common/loader-bouncing-dot";
 import { ARBITRUM_NETWORK, ARBITRUM_ONE } from "../../const/network";
 import { isRPCError } from "../connect-metamask";
 import { shortenAddress } from "../../utils/transaction";
@@ -507,10 +508,11 @@ const TargetProject = () => {
 };
 
 const UploadCode = () => {
-  const { upload, setUpload, address, loading, verified } = useStore(
+  const { upload, setUpload, deployLoading, address, loading, verified } = useStore(
     useShallow((state) => ({
       upload: state.project.upload.data,
       setUpload: state.project.setUpload,
+      deployLoading: state.deploy.loading,
       address: state.verify.address,
       loading: state.verify.loading,
       verified: state.verify.verified,
@@ -527,6 +529,7 @@ const UploadCode = () => {
         className="size-4"
         type="checkbox"
         id="uploadCodeCheckbox"
+        disabled={deployLoading}
         checked={upload}
         onChange={handleUploadOnChange}
       />
@@ -569,7 +572,7 @@ const UploadCode = () => {
 
   return (
     <div className={`my-2 relative flex items-center gap-2`}>
-      {loading ? <FaSpinner className="animate-spin" /> : <Icon verified={verified} />}
+      {loading ? <LoaderBouncingDot /> : <Icon verified={verified} />}
 
       <label className="form-check-label" htmlFor="uploadCodeCheckbox" style={{ verticalAlign: "top" }}>
         <p>{loading ? "Contract Verifying..." : <Text verified={verified} />}</p>
@@ -579,7 +582,7 @@ const UploadCode = () => {
         tooltipId="overlay-ataddresss"
         tooltipText={
           <p className="py-1 px-2">
-            If you select this option before compilation, the code will be uploaded to{" "}
+            If you select this option, the code will be uploaded to{" "}
             <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
               VeriWell
             </a>{" "}
