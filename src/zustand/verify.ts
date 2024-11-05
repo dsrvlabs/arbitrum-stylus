@@ -124,6 +124,9 @@ export const createVerifyStore: StateCreator<VerifyState & ProjectState, [], [],
       }
     },
     reset: () => {
+      fetchVerifyController?.abort();
+      requestVerifyController?.abort();
+
       set(
         produce((state: VerifyState) => {
           state.verify = { ...state.verify, ...initial };

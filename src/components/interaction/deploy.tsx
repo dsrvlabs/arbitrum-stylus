@@ -47,6 +47,7 @@ export const Deploy = ({}: DeployProps) => {
     setAddress,
     contractAddresses,
     setContractAddresses,
+    resetVerify,
   } = useStore(
     useShallow((state) => ({
       client: state.global.client,
@@ -73,12 +74,14 @@ export const Deploy = ({}: DeployProps) => {
       setAddress: state.contract.setAddress,
       contractAddresses: state.contract.contractAddresses,
       setContractAddresses: state.contract.setContractAddresses,
+      resetVerify: state.verify.reset,
     }))
   );
   const isLoading = compileLoading || deployLoading || activateLoading;
 
   const handleDeployOnClick = async () => {
     if (!client || !provider || !account || !network) return;
+    resetVerify();
     const web3 = new Web3(provider);
 
     if (isLoading) {
@@ -223,6 +226,17 @@ export const Deploy = ({}: DeployProps) => {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleVerifyOnClick = async () => {
+    if (!client || !provider || !address || !network) return;
+    requestVerify({
+      network,
+      contractAddress: address,
+      srcFileId: String(timestamp),
+      cliVersion: compilerVersion,
+    });
+  };
+
   return (
     <div>
       <Button
@@ -236,6 +250,18 @@ export const Deploy = ({}: DeployProps) => {
         <LoaderWrapper loading={isLoading} />
       </Button>
       {address && <small>{address}</small>}
+      {/* {showVerify && (
+        <Button
+          variant="outline-primary"
+          onClick={handleVerifyOnClick}
+          className="my-2 px-[1.25rem] py-[0.75rem] w-full relative flex justify-center items-center bg-transparent text-primary rounded-sm
+        hover:bg-transparent hover:text-primary hover:opacity-70
+        active:bg-transparent active:text-primary active:opacity-70"
+        >
+          <span>Verify</span>
+          <LoaderWrapper loading={verifyLoading} />
+        </Button>
+      )} */}
     </div>
   );
 };

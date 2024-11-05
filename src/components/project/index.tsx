@@ -524,7 +524,7 @@ const UploadCode = () => {
   };
 
   const Icon = ({ verified }: { verified: boolean | null }) =>
-    verified === null ? (
+    !address || verified === null ? (
       <input
         className="size-4"
         type="checkbox"
@@ -540,16 +540,15 @@ const UploadCode = () => {
     );
 
   const Text = ({ verified }: { verified: boolean | null }) =>
-    verified === null ? (
+    !address || verified === null ? (
       <p>Contract Verification</p>
     ) : verified ? (
       <p>
-        {address
-          ? `[ ${shortenAddress({
-              address,
-            })} ]`
-          : ""}{" "}
-        Verified. <br />
+        `[ $
+        {shortenAddress({
+          address,
+        })}{" "}
+        ]` Verified. <br />
         For details, please visit{" "}
         <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
           VeriWell
@@ -575,7 +574,7 @@ const UploadCode = () => {
       {loading ? <LoaderBouncingDot /> : <Icon verified={verified} />}
 
       <label className="form-check-label" htmlFor="uploadCodeCheckbox" style={{ verticalAlign: "top" }}>
-        <p>{loading ? "Contract Verifying..." : <Text verified={verified} />}</p>
+        <p>{loading ? "Contract Verifying" : <Text verified={verified} />}</p>
       </label>
       <CustomTooltip
         placement="top"
