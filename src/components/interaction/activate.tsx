@@ -25,6 +25,7 @@ export const Activate = ({}: ActivateProps) => {
     network,
     account,
     os,
+    compilerVersion,
     compileLoading,
     deployLoading,
     setLoading,
@@ -43,6 +44,7 @@ export const Activate = ({}: ActivateProps) => {
       network: state.account.network.data,
       account: state.account.address.data,
       os: state.project.os.data,
+      compilerVersion: state.project.compilerVersion.data,
       compileLoading: state.compile.loading,
       deployLoading: state.deploy.loading,
       activateLoading: state.activate.loading,
@@ -70,7 +72,9 @@ export const Activate = ({}: ActivateProps) => {
 
     let tx = "";
     try {
-      const res = await axios.get(COMPILER_API_ENDPOINT(os) + `/arbitrum/activation-tx?contractAddr=${address}`);
+      const res = await axios.get(
+        COMPILER_API_ENDPOINT(os) + `/arbitrum/activation-tx?contractAddr=${address}&cliVersion=${compilerVersion}`
+      );
       tx = res.data?.tx;
       if (!tx) {
         await client.terminal.log({
@@ -104,13 +108,6 @@ export const Activate = ({}: ActivateProps) => {
       return;
     }
 
-    // const activation_tx = await web3.eth.getTransaction(activation_hash);
-    // client.terminal.log({
-    //   type: "info",
-    //   value: "========================= activation tx ===========================",
-    // });
-    // client.terminal.log({ type: "info", value: JSON.stringify(activation_tx, null, 2) });
-
     let txReceipt = await getTransactionReceipt(hash);
     if (!txReceipt) {
       client.terminal.log({
@@ -122,13 +119,6 @@ export const Activate = ({}: ActivateProps) => {
 
     if (txReceipt.status) {
       setActivated(true);
-      // const contract = new web3.eth.Contract(abiItems.abi, address);
-      // let name = "";
-      // try {
-      //   name = await contract.methods.name().call();
-      // } catch (error) {
-      //   console.error("Error interacting with contract:", error);
-      // }
       setContractAddresses([...contractAddresses, address]);
 
       let activationTimestamp = 0;
@@ -147,7 +137,7 @@ export const Activate = ({}: ActivateProps) => {
       };
       log.info("arbitrumContractUpdateDto", arbitrumContractUpdateDto);
       try {
-        const res = await axios.put(COMPILER_API_ENDPOINT + "/arbitrum/contracts", arbitrumContractUpdateDto);
+        const res = await axios.put(COMPILER_API_ENDPOINT(os) + "/arbitrum/contracts", arbitrumContractUpdateDto);
         log.info(`put arbitrum/contracts api res`, res);
       } catch (e) {
         log.error(`put arbitrum/contracts api error`);
