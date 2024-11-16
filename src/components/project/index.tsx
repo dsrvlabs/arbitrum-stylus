@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import JSZip from "jszip";
-import { FaSyncAlt, FaSpinner, FaCheck } from "react-icons/fa";
+import { FaSyncAlt, FaCheck } from "react-icons/fa";
 import { FaExclamation } from "react-icons/fa6";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { useShallow } from "zustand/react/shallow";
