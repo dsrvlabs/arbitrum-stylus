@@ -41,6 +41,8 @@ export const ContractAddress = ({}: ContractAddressProps) => {
   };
 
   const handleAtAddressOnClick = async () => {
+    console.log("client", client);
+    console.log("contractAddress", contractAddress);
     if (!client || !contractAddress) return;
     if (!isEthAddress(contractAddress)) {
       setErrorMsg("Invalid address. Please enter a valid Ethereum address.");
@@ -51,15 +53,17 @@ export const ContractAddress = ({}: ContractAddressProps) => {
       event_category: "arbitrum",
       method: "at_address",
     });
-    const addressFiltered = contractAddresses.filter((addr) => addr !== contractAddress);
+    const addressFiltered = contractAddresses.concat(contractAddress);
+    console.log("addressFiltered", addressFiltered);
     setContractAddresses(addressFiltered);
 
     let targetAbi = abi.get(contractAddress);
     if (!targetAbi) {
+      targetAbi = { name: "", address: contractAddress, abi: [] };
       try {
         const abiStr = await client.fileManager.readFile("browser/arbitrum/abi.json");
-        targetAbi = JSON.parse(abiStr);
-        setAbi(contractAddress, targetAbi ?? { name: "", address: contractAddress, abi: [] });
+        targetAbi.abi = JSON.parse(abiStr);
+        setAbi(contractAddress, targetAbi);
       } catch (error) {
         setErrorMsg("ABI not found. Please make abi.json file in /arbitrum folder.");
       }
