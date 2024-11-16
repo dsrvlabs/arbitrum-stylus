@@ -14,14 +14,14 @@ export const ARBITRUM_SEPOLIA = {
   blockExplorerUrls: ["https://sepolia.arbiscan.io"],
 };
 
-export const OPEN_CAMPUS_CODEX = {
-  chainName: "Open Campus Codex",
-  network: "OPEN_CAMPUS_CODEX",
-  chainId: "0xa045c",
-  rpcUrls: ["	https://rpc.open-campus-codex.gelato.digital"],
-  blockExplorerUrls: ["https://opencampus-codex.blockscout.com"],
+export const GELATO_NETWORK = {
+  chainName: "Gelato Network",
+  network: "GELATO_NETWORK",
+  chainId: "0x1",
+  rpcUrls: ["https://rpc.gelato.network"],
+  blockExplorerUrls: ["https://etherscan.io"],
 };
 
-export const ARBITRUM_NETWORK = [ARBITRUM_ONE, ARBITRUM_SEPOLIA, OPEN_CAMPUS_CODEX];
+export const ARBITRUM_NETWORK = [ARBITRUM_ONE, ARBITRUM_SEPOLIA];
 
 export const MAX_SAFE_CHAIN_ID = 4503599627370476;
