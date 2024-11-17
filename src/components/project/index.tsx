@@ -550,7 +550,7 @@ const UploadCode = () => {
         })}{" "}
         ]` Verified. <br />
         For details, please visit{" "}
-        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
           VeriWell
         </a>
       </p>
@@ -563,7 +563,7 @@ const UploadCode = () => {
           : ""}{" "}
         Verification failed. <br />
         Please try manually on{" "}
-        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
           VeriWell
         </a>
       </p>
