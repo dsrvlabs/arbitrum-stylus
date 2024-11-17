@@ -582,7 +582,7 @@ const UploadCode = () => {
         tooltipText={
           <p className="py-1 px-2">
             If you select this option, the code will be uploaded to{" "}
-            <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriwell.dev">
+            <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
               VeriWell
             </a>{" "}
             and automatically verified after the deployment step
