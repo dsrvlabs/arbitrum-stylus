@@ -41,8 +41,6 @@ export const ContractAddress = ({}: ContractAddressProps) => {
   };
 
   const handleAtAddressOnClick = async () => {
-    console.log("client", client);
-    console.log("contractAddress", contractAddress);
     if (!client || !contractAddress) return;
     if (!isEthAddress(contractAddress)) {
       setErrorMsg("Invalid address. Please enter a valid Ethereum address.");
@@ -54,7 +52,6 @@ export const ContractAddress = ({}: ContractAddressProps) => {
       method: "at_address",
     });
     const addressFiltered = contractAddresses.concat(contractAddress);
-    console.log("addressFiltered", addressFiltered);
     setContractAddresses(addressFiltered);
 
     let targetAbi = abi.get(contractAddress);

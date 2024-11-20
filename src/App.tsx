@@ -23,6 +23,8 @@ export const App: React.FunctionComponent = () => {
     log.debug(`%cẅël̈l̈c̈öm̈ë-̈ẗö-̈ẅël̈l̈d̈ön̈ë-̈c̈öd̈ë!̈`, "color:yellow");
   }, []);
 
+  console.info("version 0.2.3");
+
   return (
     <div className="App">
       <Container>{global.client && <Main />}</Container>
