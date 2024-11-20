@@ -7,6 +7,7 @@ import { COMPILER_API_ENDPOINT } from "../const/endpoint";
 import { ProjectState } from "./project.types";
 
 import type { ArbitrumVerifyContractDto, ArbitrumVerifyStatusDto, VerifyState } from "./verify.types";
+import type { AccountState } from "./account.types";
 
 const initial = {
   loading: false,
@@ -18,7 +19,10 @@ const initial = {
 let fetchVerifyController: AbortController | null = null;
 let requestVerifyController: AbortController | null = null;
 
-export const createVerifyStore: StateCreator<VerifyState & ProjectState, [], [], VerifyState> = (set, get) => ({
+export const createVerifyStore: StateCreator<VerifyState & ProjectState & AccountState, [], [], VerifyState> = (
+  set,
+  get
+) => ({
   verify: {
     ...initial,
     fetchVerify: async ({ network, contractAddress }: ArbitrumVerifyStatusDto) => {
@@ -72,6 +76,7 @@ export const createVerifyStore: StateCreator<VerifyState & ProjectState, [], [],
       }
     },
     requestVerify: async ({ network, contractAddress, srcFileId, cliVersion }: ArbitrumVerifyContractDto) => {
+      const account = get().account.address.data;
       const targetNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === network);
       if (!targetNetwork) return;
 
@@ -96,6 +101,7 @@ export const createVerifyStore: StateCreator<VerifyState & ProjectState, [], [],
           contractAddress,
           srcFileId,
           cliVersion,
+          verifyRequestAddress: account,
         });
         if (response.data && response.data.verifiedSrcUrl) {
           set(
