@@ -59,6 +59,7 @@ const Network = () => {
     activateLoading,
     resetActivate,
     resetContract,
+    resetVerify,
   } = useStore(
     useShallow((state) => ({
       provider: state.account.provider,
@@ -77,6 +78,7 @@ const Network = () => {
       activateLoading: state.activate.loading,
       resetActivate: state.activate.reset,
       resetContract: state.contract.reset,
+      resetVerify: state.verify.reset,
     }))
   );
   const isLoading = compileLoading || deployLoading || activateLoading;
@@ -123,6 +125,7 @@ const Network = () => {
       resetDeploy();
       resetActivate();
       resetContract();
+      resetVerify();
       setNetwork(network);
       switchNetwork(network.chainId);
     }
@@ -542,7 +545,7 @@ const TargetProject = () => {
 };
 
 const UploadCode = () => {
-  const { network, upload, setUpload, deployLoading, address, loading, verified, contractAddress } = useStore(
+  const { network, upload, setUpload, deployLoading, address, loading, verified, reset, contractAddress } = useStore(
     useShallow((state) => ({
       network: state.account.network.data,
       upload: state.project.upload.data,
@@ -551,6 +554,7 @@ const UploadCode = () => {
       address: state.verify.address,
       loading: state.verify.loading,
       verified: state.verify.verified,
+      reset: state.verify.reset,
       contractAddress: state.contract.address,
     }))
   );
@@ -558,6 +562,7 @@ const UploadCode = () => {
   const networkName = targetNetwork ? targetNetwork.network.split("_")[1].toLocaleLowerCase() : "";
 
   const handleUploadOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    reset();
     setUpload(event.target.checked);
   };
 
@@ -572,9 +577,9 @@ const UploadCode = () => {
         onChange={handleUploadOnChange}
       />
     ) : verified ? (
-      <FaCheck className="text-success" />
+      <FaCheck className="text-success cursor-pointer" onClick={reset} />
     ) : (
-      <FaExclamation className="text-warning" />
+      <FaExclamation className="text-warning cursor-pointer" onClick={reset} />
     );
 
   const Text = ({ verified }: { verified: boolean | null }) =>
@@ -582,11 +587,11 @@ const UploadCode = () => {
       <p>Contract Verification</p>
     ) : verified ? (
       <p>
-        `[ $
+        [{" "}
         {shortenAddress({
           address,
         })}{" "}
-        ]` Verified. <br />
+        ] Verified. <br />
         For details, please visit{" "}
         <a
           className="font-bold hover:underline hover:text-white"
