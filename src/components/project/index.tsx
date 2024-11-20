@@ -508,16 +508,20 @@ const TargetProject = () => {
 };
 
 const UploadCode = () => {
-  const { upload, setUpload, deployLoading, address, loading, verified } = useStore(
+  const { network, upload, setUpload, deployLoading, address, loading, verified, contractAddress } = useStore(
     useShallow((state) => ({
+      network: state.account.network.data,
       upload: state.project.upload.data,
       setUpload: state.project.setUpload,
       deployLoading: state.deploy.loading,
       address: state.verify.address,
       loading: state.verify.loading,
       verified: state.verify.verified,
+      contractAddress: state.contract.address,
     }))
   );
+  const targetNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === network);
+  const networkName = targetNetwork ? targetNetwork.network.split("_")[1].toLocaleLowerCase() : "";
 
   const handleUploadOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUpload(event.target.checked);
@@ -550,7 +554,11 @@ const UploadCode = () => {
         })}{" "}
         ]` Verified. <br />
         For details, please visit{" "}
-        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
+        <a
+          className="font-bold hover:underline hover:text-white"
+          target="blank"
+          href={`https://verification-roan.vercel.app/verify?chain=arbitrum&network=${networkName}&contractAddress=${contractAddress}`}
+        >
           VeriWell
         </a>
       </p>
@@ -563,7 +571,11 @@ const UploadCode = () => {
           : ""}{" "}
         Verification failed. <br />
         Please try manually on{" "}
-        <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
+        <a
+          className="font-bold hover:underline hover:text-white"
+          target="blank"
+          href="https://verification-roan.vercel.app"
+        >
           VeriWell
         </a>
       </p>
@@ -582,7 +594,11 @@ const UploadCode = () => {
         tooltipText={
           <p className="py-1 px-2">
             If you select this option, the code will be uploaded to{" "}
-            <a className="font-bold hover:underline hover:text-white" target="blank" href="https://veriveri.vercel.app">
+            <a
+              className="font-bold hover:underline hover:text-white"
+              target="blank"
+              href="https://verification-roan.vercel.app"
+            >
               VeriWell
             </a>{" "}
             and automatically verified after the deployment step
