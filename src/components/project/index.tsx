@@ -266,8 +266,11 @@ const NewProject = () => {
   const isExists = async (dir: string) => {
     if (!client) return false;
     try {
-      log.debug(await client.fileManager.readdir("browser/arbitrum/" + dir));
-      return true;
+      const result = await client.fileManager.readdir("browser/arbitrum/" + dir);
+      if (Object.keys(result).length > 0 && result.constructor === Object) {
+        return true;
+      }
+      return false;
     } catch (e) {
       log.error(e);
       return false;
