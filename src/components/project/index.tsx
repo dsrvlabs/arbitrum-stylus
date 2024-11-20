@@ -134,7 +134,6 @@ const Network = () => {
         as="select"
         className="disabled:!text-gray-400 disabled:cursor-not-allowed"
         value={network.chainId}
-        size="sm"
         disabled={isLoading}
         onChange={handleNetworkOnChange}
       >
@@ -174,7 +173,6 @@ const Os = () => {
         as="select"
         className="disabled:!text-gray-400 disabled:cursor-not-allowed"
         value={os}
-        size="sm"
         onChange={handleOsOnChange}
       >
         {oses &&
@@ -210,7 +208,6 @@ const CompilerVersion = () => {
         as="select"
         className="disabled:!text-gray-400 disabled:cursor-not-allowed"
         value={compilerVersion}
-        size="sm"
         onChange={handleCompilerVersionOnChange}
       >
         {compilerVersions &&
@@ -231,7 +228,7 @@ const Account = () => {
   return (
     <Form.Group>
       <Form.Label>Account</Form.Label>
-      <Form.Control type="text" placeholder="Account" value={address ?? ""} size="sm" readOnly />
+      <Form.Control type="text" placeholder="Account" value={address ?? ""} readOnly />
     </Form.Group>
   );
 };
@@ -241,7 +238,7 @@ const Balance = () => {
   return (
     <Form.Group>
       <Form.Label>Balance</Form.Label>
-      <Form.Control type="text" placeholder="Account" value={balance ?? ""} size="sm" readOnly />
+      <Form.Control type="text" placeholder="Account" value={balance ?? ""} readOnly />
     </Form.Group>
   );
 };
@@ -315,14 +312,19 @@ const NewProject = () => {
         <Form.Control
           type="text"
           placeholder="Project Name"
-          size="sm"
           value={name ?? ""}
           onChange={handleNameOnChange}
           onKeyDown={(event) => {
             if (event.key === "Enter") event.preventDefault();
           }}
         />
-        <Button className="relative border-0" variant="success" size="sm" disabled={isLoading} onClick={createProject}>
+        <Button
+          className="relative border-0"
+          variant="secondary"
+          size="sm"
+          disabled={isLoading}
+          onClick={createProject}
+        >
           <small>Create</small>
           <LoaderWrapper loading={isLoading} />
         </Button>
@@ -413,13 +415,7 @@ const Template = () => {
     <Form.Group>
       <Form.Label>Select a Template</Form.Label>
       <InputGroup>
-        <Form.Control
-          className="custom-select"
-          as="select"
-          size="sm"
-          value={template ?? ""}
-          onChange={handleTemplateOnChange}
-        >
+        <Form.Control className="custom-select" as="select" value={template ?? ""} onChange={handleTemplateOnChange}>
           {templates &&
             templates.map((temp, idx) => {
               return (
@@ -429,7 +425,13 @@ const Template = () => {
               );
             })}
         </Form.Control>
-        <Button className="relative border-0" variant="success" size="sm" disabled={isLoading} onClick={createTemplate}>
+        <Button
+          className="relative border-0"
+          variant="secondary"
+          size="sm"
+          disabled={isLoading}
+          onClick={createTemplate}
+        >
           <small>Create</small>
           <LoaderWrapper loading={isLoading} />
         </Button>
@@ -441,8 +443,8 @@ const Template = () => {
 const TargetProject = () => {
   const {
     fetchProjects,
-    projects,
     project,
+    projects,
     setProject,
     resetCompile,
     resetDeploy,
@@ -488,16 +490,16 @@ const TargetProject = () => {
         </span>
       </Form.Text>
 
-      <InputGroup>
+      {projects ? (
         <Form.Control
           className="custom-select disabled:!text-gray-400 disabled:cursor-not-allowed"
           as="select"
           value={project ?? ""}
-          disabled={isLoading}
+          disabled={isLoading || !projects}
           onChange={handleTargetProjectOnChange}
         >
           {projects &&
-            projects.map((item, index) => {
+            (projects as string[]).map((item, index) => {
               return (
                 <option value={item} key={index}>
                   {item}
@@ -505,7 +507,36 @@ const TargetProject = () => {
               );
             })}
         </Form.Control>
-      </InputGroup>
+      ) : (
+        <CustomTooltip
+          placement="top"
+          tooltipId="overlay-ataddresss"
+          tooltipText={
+            <p className="py-1 px-2">
+              Please create a project first. <br />
+              Click the "Create" button in the Project section.
+            </p>
+          }
+          hoverable
+        >
+          <Form.Control
+            className="custom-select disabled:!text-gray-400 disabled:cursor-not-allowed"
+            as="select"
+            value={project ?? ""}
+            disabled={isLoading || !projects}
+            onChange={handleTargetProjectOnChange}
+          >
+            {projects &&
+              (projects as string[]).map((item, index) => {
+                return (
+                  <option value={item} key={index}>
+                    {item}
+                  </option>
+                );
+              })}
+          </Form.Control>
+        </CustomTooltip>
+      )}
     </Form.Group>
   );
 };
