@@ -32,8 +32,6 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
       }))
     );
   const isLoading = provider.loading || network.loading || address.loading || balance.loading;
-  const isActive =
-    provider.data && ARBITRUM_NETWORK.some((item) => item.chainId === network.data) && address.data && balance.data;
 
   /**
    * 1. user가 arbitrum chain에 연결되어 있다면 user의 현재 network 정보를 가져오고, project의 network를 user의 network로 변경
@@ -42,6 +40,7 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
    */
   const getAccountInfo = async () => {
     const networkFetched = await fetchNetwork();
+    console.log("networkFetched", networkFetched);
     const arbitrumNetwork = ARBITRUM_NETWORK.find((item) => item.chainId === networkFetched);
     if (arbitrumNetwork) {
       project.setNetwork(arbitrumNetwork);
@@ -49,6 +48,19 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
       await fetchBalance();
     } else {
       traceSwitchProjectNetwork();
+    }
+  };
+
+  const removePermission = async () => {
+    if (provider.data) {
+      try {
+        await provider.data.request({
+          method: "wallet_requestPermissions",
+          params: [{ eth_accounts: {}, "endowment:permitted-chains": {} }],
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -92,20 +104,6 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
       await fetchNetwork();
     }
   };
-  const traceSwitchAccount = async (accounts: unknown) => {
-    if (Array.isArray(accounts) && accounts.length > 0) {
-      await fetchAddress();
-      await fetchBalance();
-    }
-  };
-  const traceSwitchNetwork = async (chainId: unknown) => {
-    if (typeof chainId === "string") {
-      const targetNetwork = ARBITRUM_NETWORK.find((network) => network.chainId === chainId);
-      if (!targetNetwork) return;
-      project.setNetwork(targetNetwork);
-      await fetchBalance();
-    }
-  };
 
   useEffect(() => {
     if (!provider.data) {
@@ -115,24 +113,22 @@ export const ConnectMetmask = ({}: ConnectMetmaskProps) => {
 
     getAccountInfo();
 
-    provider.data.on("accountsChanged", traceSwitchAccount);
-    provider.data.on("chainChanged", traceSwitchNetwork);
+    // window.addEventListener("message", traceSwitchNetwork);
 
-    return () => {
-      if (!provider.data) return;
-      provider.data.removeListener("accountsChanged", traceSwitchAccount);
-      provider.data.removeListener("chainChanged", traceSwitchNetwork);
-    };
+    // return () => {
+    //   window.removeEventListener("message", traceSwitchNetwork);
+    // };
   }, []);
 
   return (
     <div className="flex flex-col gap-2">
       <Button
-        className={`px-[1.25rem] py-[0.75rem] w-full relative flex justify-center items-center ${
-          isActive ? "bg-metamask-active" : "bg-metamask-default"
-        } border-0 rounded-sm overflow-hidden`}
+        className={`px-[1.25rem] py-[0.75rem] w-full relative flex justify-center items-center bg-metamask-default border-0 rounded-sm overflow-hidden`}
         disabled={isLoading}
-        onClick={getAccountInfo}
+        onClick={async () => {
+          await removePermission();
+          await getAccountInfo();
+        }}
       >
         <img className="w-[25px] mr-[10px]" src={metamask} alt="metamask" />
         <b>Connect to MetaMask</b>

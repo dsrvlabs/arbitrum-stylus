@@ -568,14 +568,28 @@ const UploadCode = () => {
 
   const Icon = ({ verified }: { verified: boolean | null }) =>
     !address || verified === null ? (
-      <input
-        className="size-4"
-        type="checkbox"
-        id="uploadCodeCheckbox"
-        disabled={deployLoading}
-        checked={upload}
-        onChange={handleUploadOnChange}
-      />
+      <div className="m-0 flex items-center">
+        <input
+          className="peer hidden"
+          type="checkbox"
+          id="uploadCodeCheckbox"
+          disabled={deployLoading}
+          checked={upload}
+          onChange={handleUploadOnChange}
+        />
+        <label
+          htmlFor="uploadCodeCheckbox"
+          className={`
+          m-0
+          w-4 h-4
+          border-[1px] border-gray-500 rounded-sm
+          bg-gray-700
+          peer-checked:bg-checked-circle
+          peer-checked:bg-no-repeat
+          peer-checked:bg-center
+          `}
+        />
+      </div>
     ) : verified ? (
       <FaCheck className="text-success cursor-pointer" onClick={reset} />
     ) : (

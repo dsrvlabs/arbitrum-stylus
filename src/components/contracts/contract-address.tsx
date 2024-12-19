@@ -90,7 +90,7 @@ export const ContractAddress = ({}: ContractAddressProps) => {
         >
           <Button
             className="relative border-0"
-            variant="primary"
+            variant="secondary"
             size="sm"
             disabled={contractLoading}
             onClick={handleAtAddressOnClick}
