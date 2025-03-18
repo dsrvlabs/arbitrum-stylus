@@ -31,7 +31,7 @@ export const Header = ({}: HeaderProps) => {
           </Badge>
         </a>
         <a
-          href="https://support.welldonestudio.io/"
+          href="https://github.com/dsrvlabs/arbitrum-stylus/issues"
           target="_blank"
           rel="noreferrer"
           style={{ textDecoration: "none" }}
