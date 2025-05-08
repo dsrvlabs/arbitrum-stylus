@@ -46,6 +46,10 @@ module.exports = {
       return rule;
     });
 
+    config.module.rules = config.module.rules.filter(
+      (rule) => !(rule.enforce === "pre" && rule.use && rule.use.some((use) => use.loader === "source-map-loader"))
+    );
+
     return config;
   },
 };

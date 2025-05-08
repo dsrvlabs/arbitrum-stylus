@@ -34,12 +34,12 @@ const initial = {
   compilerVersion: {
     loading: false,
     error: false,
-    data: "0.5.8",
+    data: "0.5.12",
   },
   compilerVersions: {
     loading: false,
     error: false,
-    data: ["0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8"],
+    data: ["0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.10", "0.5.11", "0.5.12"],
   },
   os: {
     loading: false,
