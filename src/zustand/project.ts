@@ -174,12 +174,15 @@ export const createProjectStore: StateCreator<ProjectState & GlobalState, [], []
 
       try {
         await findTomlFileRecursively("browser/arbitrum");
-        const project = get().project.template.data ? `arbitrum/${get().project.template.data}` : projects[0];
+        const selectedTemplate = get().project.template.data;
+        const templateProjectPath = selectedTemplate ? `arbitrum/${selectedTemplate}` : null;
+        const projectExists = templateProjectPath ? projects.includes(templateProjectPath) : false;
+
         set(
           produce((state: ProjectState) => {
             state.project.projects.loading = false;
             state.project.projects.data = projects;
-            state.project.project.data = project;
+            state.project.project.data = projectExists ? templateProjectPath : projects.length > 0 ? projects[0] : null;
           })
         );
       } catch (error) {

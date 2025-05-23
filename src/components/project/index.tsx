@@ -347,6 +347,7 @@ const Template = () => {
     compileLoading,
     deployLoading,
     activateLoading,
+    setProject,
   } = useStore(
     useShallow((state) => ({
       client: state.global.client,
@@ -358,6 +359,7 @@ const Template = () => {
       compileLoading: state.compile.loading,
       deployLoading: state.deploy.loading,
       activateLoading: state.activate.loading,
+      setProject: state.project.setProject,
     }))
   );
   const isLoading = compileLoading || deployLoading || activateLoading;
@@ -383,40 +385,70 @@ const Template = () => {
       }
     };
 
-    if (await isExists(template)) {
-      await client.terminal.log({
-        type: "error",
-        value: `The folder ${template} already exists`,
-      });
-      return;
-    }
-
-    const res = await axios.request({
-      method: "GET",
-      url: `https://api.welldonestudio.io/compiler/s3Proxy?bucket=code-template&fileKey=arbitrum/` + template + ".zip",
-      responseType: "arraybuffer",
-      responseEncoding: "null",
-    });
-
-    const jsZip = new JSZip();
-    const zip = await jsZip.loadAsync(res.data);
-
-    let content: any;
     try {
-      Object.keys(zip.files).map(async (key) => {
-        log.debug(`@@@ key=${key}`);
-        if (zip.files[key].dir) {
-          await client?.fileManager.mkdir("browser/arbitrum/" + key);
-        } else if (!key.startsWith("_") && key !== template + "/.DS_Store") {
-          content = await zip.file(key)?.async("string");
-          await client?.fileManager.writeFile("browser/arbitrum/" + key, content);
-        }
-      });
-      await fetchProjects();
+      if (await isExists(template)) {
+        await client.terminal.log({
+          type: "error",
+          value: `The folder ${template} already exists`,
+        });
+        return;
+      }
 
-      await client.terminal.log({ type: "info", value: template + " is created successfully." });
-    } catch (e) {
-      log.error(e);
+      const res = await axios.request({
+        method: "GET",
+        url: `https://api.welldonestudio.io/compiler/s3Proxy?bucket=code-template&fileKey=arbitrum/${template}.zip`,
+        responseType: "arraybuffer",
+        responseEncoding: "null",
+      });
+
+      const jsZip = new JSZip();
+      const zip = await jsZip.loadAsync(res.data);
+
+      let content: any;
+      try {
+        Object.keys(zip.files).map(async (key) => {
+          log.debug(`@@@ key=${key}`);
+          if (zip.files[key].dir) {
+            await client?.fileManager.mkdir("browser/arbitrum/" + key);
+          } else if (!key.startsWith("_") && key !== template + "/.DS_Store") {
+            content = await zip.file(key)?.async("string");
+            await client?.fileManager.writeFile("browser/arbitrum/" + key, content);
+          }
+        });
+        await fetchProjects();
+
+        // 템플릿 생성 후 해당 프로젝트를 자동으로 선택
+        const projectPath = `arbitrum/${template}`;
+        setProject(projectPath);
+
+        await client.terminal.log({ type: "info", value: template + " is created successfully." });
+      } catch (e) {
+        log.error(e);
+        await client.terminal.log({
+          type: "error",
+          value: "Failed to extract template files. Please try again.",
+        });
+      }
+    } catch (error) {
+      log.error(error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          await client.terminal.log({
+            type: "error",
+            value: `Template "${template}" not found. Please check the template name.`,
+          });
+        } else {
+          await client.terminal.log({
+            type: "error",
+            value: `Failed to download template. Error: ${error.message}`,
+          });
+        }
+      } else {
+        await client.terminal.log({
+          type: "error",
+          value: "An unexpected error occurred while creating the template.",
+        });
+      }
     }
   };
 
@@ -494,6 +526,9 @@ const TargetProject = () => {
     }))
   );
   const isLoading = compileLoading || deployLoading || activateLoading;
+
+  console.log("@@@ target project", project);
+  console.log("@@@ target projects", projects);
 
   const handleTargetProjectOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setProject(event.target.value);
