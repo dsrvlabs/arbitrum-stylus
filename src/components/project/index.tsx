@@ -337,19 +337,29 @@ const NewProject = () => {
 };
 
 const Template = () => {
-  const { client, template, setTemplate, templates, fetchProjects, compileLoading, deployLoading, activateLoading } =
-    useStore(
-      useShallow((state) => ({
-        client: state.global.client,
-        template: state.project.template.data,
-        setTemplate: state.project.setTemplate,
-        templates: state.project.templates.data,
-        fetchProjects: state.project.fetchProjects,
-        compileLoading: state.compile.loading,
-        deployLoading: state.deploy.loading,
-        activateLoading: state.activate.loading,
-      }))
-    );
+  const {
+    client,
+    template,
+    setTemplate,
+    templates,
+    openzeppelinTemplates,
+    fetchProjects,
+    compileLoading,
+    deployLoading,
+    activateLoading,
+  } = useStore(
+    useShallow((state) => ({
+      client: state.global.client,
+      template: state.project.template.data,
+      setTemplate: state.project.setTemplate,
+      templates: state.project.templates.data,
+      openzeppelinTemplates: state.project.openzeppelinTemplates.data,
+      fetchProjects: state.project.fetchProjects,
+      compileLoading: state.compile.loading,
+      deployLoading: state.deploy.loading,
+      activateLoading: state.activate.loading,
+    }))
+  );
   const isLoading = compileLoading || deployLoading || activateLoading;
 
   const createTemplate = async () => {
@@ -419,14 +429,26 @@ const Template = () => {
       <Form.Label>Select a Template</Form.Label>
       <InputGroup>
         <Form.Control className="custom-select" as="select" value={template ?? ""} onChange={handleTemplateOnChange}>
-          {templates &&
-            templates.map((temp, idx) => {
-              return (
-                <option value={temp} key={idx}>
-                  {temp}
-                </option>
-              );
-            })}
+          <optgroup label="OpenZeppelin Templates">
+            {openzeppelinTemplates &&
+              openzeppelinTemplates.map((temp: string, idx: number) => {
+                return (
+                  <option value={temp} key={`oz-${idx}`}>
+                    {temp}
+                  </option>
+                );
+              })}
+          </optgroup>
+          <optgroup label="Basic Templates">
+            {templates &&
+              templates.map((temp, idx) => {
+                return (
+                  <option value={temp} key={idx}>
+                    {temp}
+                  </option>
+                );
+              })}
+          </optgroup>
         </Form.Control>
         <Button
           className="relative border-0"

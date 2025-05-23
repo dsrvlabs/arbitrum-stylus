@@ -6,6 +6,7 @@ export interface ProjectState {
     errorMsg: string | null;
     name: DataType<string>;
     templates: DataType<string[]>;
+    openzeppelinTemplates: DataType<string[]>;
     template: DataType<string>;
     project: DataType<string>;
     projects: DataType<string[]>;
