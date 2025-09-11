@@ -385,6 +385,8 @@ const Template = () => {
       }
     };
 
+    const isOpenZeppelinTemplate = (openzeppelinTemplates ?? []).includes(template);
+
     try {
       if (await isExists(template)) {
         await client.terminal.log({
@@ -396,7 +398,9 @@ const Template = () => {
 
       const res = await axios.request({
         method: "GET",
-        url: `https://api.welldonestudio.io/compiler/s3Proxy?bucket=code-template&fileKey=arbitrum/${template}.zip`,
+        url: `https://api.welldonestudio.io/compiler/s3Proxy?bucket=code-template&fileKey=arbitrum/${
+          isOpenZeppelinTemplate ? `v0.2.0/${template}` : template
+        }.zip`,
         responseType: "arraybuffer",
         responseEncoding: "null",
       });
